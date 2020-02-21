@@ -16,7 +16,8 @@ WHERE am.id_actor = p.id_person
   AND m.country = 'Japan'
   AND m.year = '2019'
 ORDER BY facebook_likes
-    DESC;
+    DESC
+LIMIT 1;
 
 #&&2
 SELECT a.id_actor, p.name
@@ -59,29 +60,67 @@ HAVING AVG(m.imdb_score) > ALL
         GROUP BY a2.id_actor);
 
 
-
-
-
 #&&3
 SELECT p.name, SUM(m.movie_facebook_likes) AS 'sum_likes'
-FROM actor AS a, person AS p, director AS d, movie AS m
-WHERE p.id_person = m.id_director AND
-        m.year
-      #Seleccionamos todas las peliculas que haya hecho el director en concreto y restaremos todas
-      #las peliculas nuevas que haya producido, comparando que no quede ninguna más antigua al 2019
-      NOT IN(SELECT m.year
-          FROM movie AS m
-          WHERE p.id_person = m.id_director AND
-                m.year < '2019'
-       )
+FROM person AS p,
+     director AS d,
+     movie AS m
+WHERE p.id_person = d.id_director
+  AND d.id_director = m.id_director
+  AND m.year
+    #Seleccionamos todas las peliculas que haya hecho el director en concreto y restaremos todas
+    #las peliculas nuevas que haya producido, comparando que no quede ninguna más antigua al 2019
+    NOT IN (SELECT m.year
+            FROM movie AS m2
+            WHERE d.id_director = m2.id_director
+              AND m2.year < '2019')
 
-      #suma de la popularitat de les seves pelicules
-      (SELECT m.movie_facebook_likes
-          FROM movie AS m)
-
-
-
+#suma de la popularitat de les seves pelicules
+GROUP BY p.name
+ORDER BY SUM(m.movie_facebook_likes)
+    DESC
+LIMIT 1;
 
 #&&4
+SELECT a.id_actor, p.name, p.facebook_likes
+FROM actor AS a,
+     person AS p,
+     movie AS m,
+     actor_movie AS am
+WHERE m.id_movie IN (SELECT m2.id_movie
+                     FROM movie AS m2
+                     WHERE m2.country <> 'USA'
+                       AND m2.country = 'UK'
+                     GROUP BY m2.id_movie
+                     HAVING COUNT(m2.country = 'UK' > 1))
+
+  AND p.id_person = a.id_actor
+  AND a.id_actor = am.id_actor
+  AND am.id_movie = m.id_movie
+
+GROUP BY a.id_actor, p.name, p.facebook_likes
+HAVING COUNT(m.country = 'USA') > 1
+ORDER BY p.facebook_likes
+    DESC;
+
+
 #&&5
-#&&6
+SELECT p.name, COUNT(DISTINCT m.country) AS 'sum_participacions'
+FROM person AS p,
+     movie AS m,
+     actor AS a,
+     actor_movie AS am
+WHERE p.id_person = a.id_actor
+  AND a.id_actor = am.id_actor
+  AND am.id_movie = m.id_movie
+  AND p.id_person IN
+      (SELECT m2.id_director
+       FROM movie AS m2,
+            person AS p2
+       WHERE p2.id_person = m2.id_director
+      )
+  AND p.name LIKE '%d%'
+GROUP BY p.name
+ORDER BY sum_participacions
+    DESC
+LIMIT 6;
