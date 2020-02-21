@@ -2,10 +2,6 @@
 USE movies;
 
 
-/*SELECT id_person, name, facebook_likes
-FROM PERSON as p
-WHERE*/
-
 #&&1
 SELECT id_person, name, facebook_likes
 FROM person AS p,
@@ -18,6 +14,7 @@ WHERE am.id_actor = p.id_person
 ORDER BY facebook_likes
     DESC
 LIMIT 1;
+
 
 #&&2
 SELECT a.id_actor, p.name
@@ -81,27 +78,41 @@ ORDER BY SUM(m.movie_facebook_likes)
     DESC
 LIMIT 1;
 
+
 #&&4
 SELECT a.id_actor, p.name, p.facebook_likes
 FROM actor AS a,
      person AS p,
      movie AS m,
      actor_movie AS am
-WHERE m.id_movie IN (SELECT m2.id_movie
-                     FROM movie AS m2
-                     WHERE m2.country <> 'USA'
-                       AND m2.country = 'UK'
-                     GROUP BY m2.id_movie
-                     HAVING COUNT(m2.country = 'UK' > 1))
-
-  AND p.id_person = a.id_actor
+WHERE m.country = 'UK'
+  AND a.id_actor NOT IN (SELECT a2.id_actor
+                         FROM movie AS m2,
+                              actor_movie AS am2,
+                              actor AS a2
+                         WHERE m2.country <> 'USA'
+                           AND m2.country <> 'UK'
+                           AND am2.id_movie = m2.id_movie
+                           AND am2.id_actor = a.id_actor)
+  AND m.id_movie = am.id_movie
   AND a.id_actor = am.id_actor
-  AND am.id_movie = m.id_movie
-
+  AND a.id_actor = p.id_person
+  AND a.id_actor IN (SELECT a3.id_actor
+                     FROM actor AS a3,
+                          person AS p3,
+                          movie AS m3,
+                          actor_movie AS am3
+                     WHERE m3.country = 'USA'
+                       AND m3.id_movie = am3.id_movie
+                       AND a3.id_actor = am3.id_actor
+                       AND a3.id_actor = p3.id_person
+                     GROUP BY a3.id_actor
+                     HAVING COUNT(m3.country = 'USA') > 1)
 GROUP BY a.id_actor, p.name, p.facebook_likes
-HAVING COUNT(m.country = 'USA') > 1
+HAVING COUNT(m.country = 'UK') > 1
 ORDER BY p.facebook_likes
-    DESC;
+    DESC
+LIMIT 3;
 
 
 #&&5
