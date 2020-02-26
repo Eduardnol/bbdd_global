@@ -11,6 +11,15 @@ WHERE am.id_actor = p.id_person
   AND am.id_movie = m.id_movie
   AND m.country = 'Japan'
   AND m.year = '2019'
+GROUP BY id_person, name, facebook_likes
+HAVING COUNT(m.id_movie) <= ALL (SELECT COUNT(m2.id_movie)
+                                FROM actor_movie AS am2,
+                                     movie AS m2,
+                                     person AS p2
+                                WHERE am2.id_actor <> p.id_person
+                                  AND am2.id_movie = m2.id_movie
+                                  AND am2.id_actor = p2.id_person
+                                GROUP BY am2.id_actor)
 ORDER BY facebook_likes
     DESC
 LIMIT 1;
@@ -116,7 +125,7 @@ LIMIT 3;
 
 
 #&&5
-SELECT p.name, COUNT(DISTINCT m.country) AS 'sum_participacions'
+SELECT p.name, COUNT(DISTINCT m.country) AS 'sum_participations'
 FROM person AS p,
      movie AS m,
      actor AS a,
@@ -132,6 +141,6 @@ WHERE p.id_person = a.id_actor
       )
   AND p.name LIKE '%d%'
 GROUP BY p.name
-ORDER BY sum_participacions
+ORDER BY sum_participations
     DESC
 LIMIT 6;
