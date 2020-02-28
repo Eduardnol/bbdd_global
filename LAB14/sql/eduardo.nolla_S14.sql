@@ -114,13 +114,12 @@ WHERE p.id_person = d.id_director
                       FROM movie AS m2
                       WHERE m2.id_director = d.id_director
                       GROUP BY m2.id_movie)
-  AND m.id_movie = ANY (SELECT am2.id_movie
+  AND 10 <= ALL (SELECT COUNT(am2.id_movie)
                      FROM movie AS m2,
                           actor_movie AS am2
                      WHERE m2.id_movie = am2.id_movie
                        AND m2.id_director = d.id_director
-                     GROUP BY am2.id_movie
-                     HAVING COUNT(am2.id_movie) > 10)
+                     GROUP BY am2.id_movie)
 GROUP BY d.id_director, p.name
 ORDER BY p.name;
 
