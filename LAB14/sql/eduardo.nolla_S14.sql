@@ -99,28 +99,36 @@ ORDER BY p.name;
 
 
 
-#&&4ç
+#&&4
 
 
 SELECT p.name
 FROM person AS p,
      director AS d,
-     movie AS m
+     movie AS m,
+     actor_movie AS am
 WHERE p.id_person = d.id_director
   AND d.id_director = m.id_director
+  AND am.id_movie = m.id_movie
   AND 50000000 < ALL (SELECT m2.gross
                       FROM movie AS m2
                       WHERE m2.id_director = d.id_director
                       GROUP BY m2.id_movie)
-  AND m.id_movie IN (SELECT m2.id_movie
+  AND m.id_movie = ANY (SELECT am2.id_movie
                      FROM movie AS m2,
                           actor_movie AS am2
                      WHERE m2.id_movie = am2.id_movie
                        AND m2.id_director = d.id_director
-                     GROUP BY m2.id_movie
+                     GROUP BY am2.id_movie
                      HAVING COUNT(am2.id_movie) > 10)
 GROUP BY d.id_director, p.name
-ORDER BY p.name
+ORDER BY p.name;
+
+
+
+
+
+
 
 #&&5
 SELECT p.name, pr.name, COUNT(p.name)
