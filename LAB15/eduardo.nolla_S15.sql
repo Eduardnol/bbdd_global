@@ -52,4 +52,13 @@ HAVING COUNT(d.id_director) > 7
 ORDER BY same DESC, p.name ASC
 LIMIT 10;
 
-
+#&&4
+SELECT m.title, pro.name, m.country AS country
+FROM movie AS m
+         LEFT JOIN actor_movie am on m.id_movie = am.id_movie,
+     producer AS pro
+         JOIN producer_movie pm on pro.id_producer = pm.id_producer
+WHERE am.id_movie IS NULL
+GROUP BY m.id_movie, m.title
+ORDER BY m.title DESC
+LIMIT 5;
