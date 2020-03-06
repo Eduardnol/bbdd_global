@@ -24,20 +24,32 @@ HAVING COUNT(DISTINCT pro.id_producer) = (SELECT COUNT(DISTINCT pro2.id_producer
 SELECT p.name,
        (SELECT COUNT(DISTINCT m.year)
         FROM movie AS m
-                 JOIN actor_movie AS am on m.id_movie = am.id_movie
-                 JOIN actor AS a on am.id_actor = a.id_actor
+                 JOIN actor_movie AS am ON m.id_movie = am.id_movie
+                 JOIN actor AS a ON am.id_actor = a.id_actor
         WHERE a.id_actor = p.id_person) AS active_years
 
 FROM person AS p
-         JOIN actor AS a2 on p.id_person = a2.id_actor
+         JOIN actor AS a2 ON p.id_person = a2.id_actor
 GROUP BY p.id_person, p.facebook_likes
 HAVING (SELECT COUNT(DISTINCT m.year)
         FROM movie AS m
-                 JOIN actor_movie AS am on m.id_movie = am.id_movie
-                 JOIN actor AS a on am.id_actor = a.id_actor
+                 JOIN actor_movie AS am ON m.id_movie = am.id_movie
+                 JOIN actor AS a ON am.id_actor = a.id_actor
         WHERE a.id_actor = p.id_person) >= (SELECT COUNT(DISTINCT m2.year)
                                             FROM movie AS m2) / 2
 ORDER BY active_years DESC, p.facebook_likes DESC;
 
+#&&3
+SELECT p.name AS director, p2.name AS actor, COUNT(DISTINCT m.id_movie) AS same
+FROM person AS p2
+         JOIN actor AS a ON p2.id_person = a.id_actor
+         JOIN actor_movie AS am ON a.id_actor = am.id_actor
+         JOIN movie m ON am.id_movie = m.id_movie
+         JOIN director AS d ON m.id_director = d.id_director
+         JOIN person AS p ON d.id_director = p.id_person
+GROUP BY d.id_director, a.id_actor, p.name, p2.name
+HAVING COUNT(d.id_director) > 7
+ORDER BY same DESC, p.name ASC
+LIMIT 10;
 
 
