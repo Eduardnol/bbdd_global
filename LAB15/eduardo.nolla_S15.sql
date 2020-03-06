@@ -58,7 +58,10 @@ FROM movie AS m
          LEFT JOIN actor_movie am ON m.id_movie = am.id_movie
          LEFT JOIN actor AS a ON am.id_actor = a.id_actor
          JOIN producer_movie AS pm ON pm.id_movie = m.id_movie
-         JOIN producer AS pro ON pm.id_producer = pro.id_producer
+         JOIN (SELECT *
+               FROM producer AS pro2
+               GROUP BY pro2.id_producer
+               ORDER BY pro2.name) as pro ON pm.id_producer = pro.id_producer
 WHERE am.id_movie IS NULL
 GROUP BY m.id_movie, m.title
 ORDER BY m.title DESC
@@ -104,5 +107,5 @@ UNION
                                     JOIN director d2 on p2.id_person = d2.id_director)
  GROUP BY d.id_director, p.facebook_likes
  HAVING COUNT(DISTINCT gm.id_genre) > 15
- )
- ORDER BY facebook_likes DESC
+)
+ORDER BY facebook_likes DESC;
