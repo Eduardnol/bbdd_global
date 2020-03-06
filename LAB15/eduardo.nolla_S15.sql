@@ -16,21 +16,28 @@ WHERE g.description = 'Action'
   AND pro.country = 'Thailand'
   AND m.id_director = d.id_director
 GROUP BY m.id_movie
-HAVING COUNT( DISTINCT pro.id_producer) = (SELECT COUNT(DISTINCT pro2.id_producer)
-                                  FROM producer AS pro2
-                                  WHERE pro2.country = 'Thailand');
+HAVING COUNT(DISTINCT pro.id_producer) = (SELECT COUNT(DISTINCT pro2.id_producer)
+                                          FROM producer AS pro2
+                                          WHERE pro2.country = 'Thailand');
 
 #&&2
 SELECT p.name,
-       (SELECT m.year
+       (SELECT COUNT(DISTINCT m.year)
         FROM movie AS m
                  JOIN actor_movie AS am on m.id_movie = am.id_movie
                  JOIN actor AS a on am.id_actor = a.id_actor
-        WHERE a.id_actor = a2.id_actor
-        GROUP BY m.id_movie, m.year
-        ORDER BY m.year)
+        WHERE a.id_actor = p.id_person) AS active_years
+
 FROM person AS p
          JOIN actor AS a2 on p.id_person = a2.id_actor
+GROUP BY p.id_person, p.facebook_likes
+HAVING (SELECT COUNT(DISTINCT m.year)
+        FROM movie AS m
+                 JOIN actor_movie AS am on m.id_movie = am.id_movie
+                 JOIN actor AS a on am.id_actor = a.id_actor
+        WHERE a.id_actor = p.id_person) >= (SELECT COUNT(DISTINCT m2.year)
+                                            FROM movie AS m2) / 2
+ORDER BY active_years DESC, p.facebook_likes DESC;
 
 
 
