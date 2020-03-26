@@ -66,15 +66,26 @@ ORDER BY m.imdb_score
     DESC;
 
 #&&3
-
+#No se resoldre aquesta querie
 SELECT p.name
 FROM person AS p,
      actor AS a,
      movie AS m,
-     actor_movie AS am
+     actor_movie AS am,
+     genre_movie AS gm
 WHERE p.id_person = a.id_actor
   AND am.id_actor = a.id_actor
   AND am.id_movie = m.id_movie
+  AND gm.id_movie = m.id_movie
+  AND 15 <= ALL (SELECT COUNT(gm2.id_movie)
+                 FROM genre_movie AS gm2,
+                      movie AS m2,
+                      actor_movie AS am2
+                 WHERE gm2.id_movie = m2.id_movie
+                   AND am2.id_movie = m2.id_movie
+                   AND am2.id_actor = a.id_actor
+                 GROUP BY gm2.id_genre
+)
   AND a.id_actor IN
       (SELECT a3.id_actor
        FROM actor AS a3,
@@ -82,16 +93,6 @@ WHERE p.id_person = a.id_actor
        WHERE a3.id_actor = am3.id_actor
        GROUP BY am3.id_movie
        HAVING COUNT(am3.id_movie) >= 3)
-  AND 15 <= (SELECT gm2.id_genre
-             FROM movie AS m2,
-                  actor_movie AS am2,
-                  genre_movie AS gm2,
-                  actor AS a2
-             WHERE am2.id_movie = m2.id_movie
-               AND gm2.id_movie = m2.id_movie
-               AND a2.id_actor = am2.id_actor
-               AND a2.id_actor = '1023'
-             GROUP BY gm2.id_genre)
 GROUP BY p.name
 ORDER BY p.name;
 

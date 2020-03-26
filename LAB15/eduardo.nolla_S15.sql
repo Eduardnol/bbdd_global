@@ -30,13 +30,13 @@ SELECT p.name,
 
 FROM person AS p
          JOIN actor AS a2 ON p.id_person = a2.id_actor
+WHERE (SELECT COUNT(DISTINCT m.year)
+       FROM movie AS m
+                JOIN actor_movie AS am ON m.id_movie = am.id_movie
+                JOIN actor AS a ON am.id_actor = a.id_actor
+       WHERE a.id_actor = p.id_person) > (SELECT COUNT(DISTINCT m2.year)
+                                           FROM movie AS m2) / 2
 GROUP BY p.id_person, p.facebook_likes
-HAVING (SELECT COUNT(DISTINCT m.year)
-        FROM movie AS m
-                 JOIN actor_movie AS am ON m.id_movie = am.id_movie
-                 JOIN actor AS a ON am.id_actor = a.id_actor
-        WHERE a.id_actor = p.id_person) >= (SELECT COUNT(DISTINCT m2.year)
-                                            FROM movie AS m2) / 2
 ORDER BY active_years DESC, p.facebook_likes DESC;
 
 #&&3
@@ -49,7 +49,7 @@ FROM person AS p2
          JOIN person AS p ON d.id_director = p.id_person
 GROUP BY d.id_director, a.id_actor, p.name, p2.name
 HAVING COUNT(d.id_director) > 7
-ORDER BY same DESC, p.name ASC
+ORDER BY same DESC, p.name
 LIMIT 10;
 
 #&&4
@@ -66,20 +66,6 @@ WHERE am.id_movie IS NULL
 GROUP BY m.id_movie, m.title
 ORDER BY m.title DESC
 LIMIT 5;
-
-# #&&4
-# SELECT m.title, a.id_actor, pro.name, m.country AS country
-# FROM movie AS m
-#          LEFT JOIN actor_movie am ON m.id_movie = am.id_movie
-#          LEFT JOIN actor AS a ON am.id_actor = a.id_actor,
-#      producer AS pro
-#          JOIN producer_movie pm ON pro.id_producer = pm.id_producer
-#          JOIN movie m2 ON pm.id_movie = m2.id_movie
-#
-# WHERE am.id_movie IS NULL AND m.id_movie = m2.id_movie
-# GROUP BY m.id_movie, m.title
-# ORDER BY m.title DESC
-# LIMIT 5;
 
 #&&5
 (SELECT a.id_actor, d.id_director, p.name, p.facebook_likes
