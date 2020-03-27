@@ -21,8 +21,10 @@ INSERT INTO personal(nom,cognom) VALUES
 ('Juan','Vives');
 
 # Creem la taula HISTORIAL
-CREATE TABLE historial(
-ID_persona INTEGER NOT NULL);
+CREATE TABLE historial
+(
+    ID_persona INTEGER NOT NULL
+);
 
 # Inicialitzem nou delimitador
 DELIMITER $$
@@ -31,38 +33,40 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS calcul_ex $$
 
 # Creem procedure 'calcul_ex' per a l'objectiu desitjat
-CREATE PROCEDURE calcul_ex () 
+CREATE PROCEDURE calcul_ex()
 BEGIN
 
-   # Declarem variable per control de LOOP (done) i per emmagatzemar noms de les taules (nom_taula)
-   DECLARE done INT DEFAULT 0;
-   DECLARE identificador INTEGER;
+    # Declarem variable per control de LOOP (done) i per emmagatzemar noms de les taules (nom_taula)
+    DECLARE done INT DEFAULT 0;
+    DECLARE identificador INTEGER;
 
-   # Declarem cursor amb consulta que recupera els noms de les taules (no virtuals) de la vista del metadata (information_schema)
-   DECLARE cur1 CURSOR FOR SELECT ID FROM PERSONAL;
+    # Declarem cursor amb consulta que recupera els noms de les taules (no virtuals) de la vista del metadata (information_schema)
+    DECLARE cur1 CURSOR FOR SELECT ID FROM PERSONAL;
 
-   # Declarem el Handler pel control del bucle
-   DECLARE CONTINUE HANDLER FOR NOT FOUND SET done=1;
+    # Declarem el Handler pel control del bucle
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
-   # Obrim el cursor per a comencar a emprar-lo
-   OPEN cur1;
+    # Obrim el cursor per a comencar a emprar-lo
+    OPEN cur1;
 
-nom_loop: LOOP
-	FETCH cur1 INTO identificador;
-	IF done=1 THEN
-		LEAVE nom_loop;
-	END IF;
-	SELECT identificador;
-	INSERT INTO historial VALUES (identificador);
-END LOOP nom_loop;
+    nom_loop:
+    LOOP
+        FETCH cur1 INTO identificador;
+        IF done = 1 THEN
+            LEAVE nom_loop;
+        END IF;
+        SELECT identificador;
+        INSERT INTO historial VALUES (identificador);
+    END LOOP nom_loop;
 
-CLOSE cur1;
+    CLOSE cur1;
 
 END $$
 DELIMITER ;
 
 # Cridem el stored procedure declarat
-CALL calcul_ex ();
+CALL calcul_ex();
 
 # Mostrem resultats de taula HISTORIAL
-SELECT * FROM historial;
+SELECT *
+FROM historial;
