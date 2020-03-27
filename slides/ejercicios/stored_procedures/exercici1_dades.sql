@@ -1,4 +1,6 @@
-DROP TABLE car_sales;
+USE bd_ejemplo4;
+
+DROP TABLE IF EXISTS car_sales;
 CREATE TABLE car_sales( ID INTEGER NOT NULL AUTO_INCREMENT,
 last_name VARCHAR(256), company VARCHAR(256), cost DOUBLE, model VARCHAR(256), PRIMARY KEY(ID));
 
