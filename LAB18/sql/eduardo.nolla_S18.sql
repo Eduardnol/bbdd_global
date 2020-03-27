@@ -36,7 +36,7 @@ SELECT @result;
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS masterControlBadge $$
-CREATE PROCEDURE masterControlBadge(IN id_card_in VARCHAR(5), OUT wasFound int)
+CREATE PROCEDURE masterControlBadge(IN id_persona int , OUT wasFound int)
 BEGIN
 
     DECLARE done INT DEFAULT 0;
@@ -47,9 +47,7 @@ BEGIN
     DECLARE id_user INT;
     DECLARE cur1 CURSOR FOR SELECT access_in, access_out,id_person FROM timer;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-
-    CALL lsZon.getId(id_card_in, @out);
-    SET id_user = (SELECT @out);
+    SET id_user = id_persona;
     SET actual_time = now();
 
 
@@ -94,7 +92,7 @@ $$
 DELIMITER ;
 
 #&&5
-CALL lsZon.masterControlBadge('1234A', @result);
+CALL lsZon.masterControlBadge(1, @result);
 
 #&&6
 SELECT @result;
