@@ -6,7 +6,7 @@ USE lszon;
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS getId $$
-CREATE PROCEDURE getId(IN id_card_in VARCHAR(5), OUT id_person_out int)
+CREATE PROCEDURE getId(IN id_card_in VARCHAR(5), OUT id_person_out INTEGER)
 BEGIN
 
     SET id_person_out = (SELECT id_person
@@ -15,7 +15,7 @@ BEGIN
 
     IF id_person_out IS NULL THEN
 
-        SET id_person_out = '-1';
+        SET id_person_out = -1;
 
     END IF;
 
@@ -40,42 +40,50 @@ CREATE PROCEDURE masterControlBadge(IN id_card_in VARCHAR(5), OUT wasFound int)
 BEGIN
 
     DECLARE done INT DEFAULT 0;
-    DECLARE time_stamp DATETIME;
-    DECLARE time DATETIME;
+    DECLARE actual_time DATETIME;
+    DECLARE time_in DATETIME;
+    DECLARE time_out DATETIME;
     DECLARE persona VARCHAR(5);
-    DECLARE id_user VARCHAR(5);
-    DECLARE cur1 CURSOR FOR SELECT access_in, id_person FROM timer;
+    DECLARE id_user INT;
+    DECLARE cur1 CURSOR FOR SELECT access_in, access_out,id_person FROM timer;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
-    SET time_stamp = now();
+    CALL lsZon.getId(id_card_in, @out);
+    SET id_user = (SELECT @out);
+    SET actual_time = now();
+
 
     OPEN cur1;
     buscaHora:
     LOOP
-        CALL lsZon.getId('1234A', @cosa);
-        FETCH cur1 INTO time, persona;
-        IF done = 1 THEN
-            INSERT INTO timer (access_in, access_out, id_person) VALUES (time_stamp, null, (SELECT @cosa));
-            SET wasFound = 1;
-        ELSEIF time IS NULL THEN
 
+        FETCH cur1 INTO time_in, time_out, persona;
+
+        #se va a la office
+        IF done = 1 THEN
+            INSERT INTO timer (access_in, access_out, id_person) VALUES (actual_time, null, id_user);
+            SET wasFound = 1;
+            LEAVE buscaHora;
+        END IF;
+        IF time_in IS NULL THEN
 
             #Sesion Abierta
-        IF (HOUR(TIMEDIFF(time, time_stamp)) >= 8) THEN
-            UPDATE timer SET access_out = '2000-01-01 00:00:00' WHERE id_user = @cosa;
+        IF TIMESTAMPDIFF(SECOND ,time_in, actual_time) >= 8 * 3600 AND time_out IS NULL THEN
+            UPDATE timer SET access_out = '2000-01-01 00:00:00' WHERE id_person = id_user AND access_out IS NULL;
             SET wasFound = 0;
+            LEAVE buscaHora;
          end if;
+
             #Se va a casa
-        ELSEIF TIME_TO_SEC(TIMEDIFF(time, time_stamp)) > 20 && id_user = @cosa THEN
-            UPDATE timer SET access_out = time_stamp WHERE id_user = @cosa;
+        ELSEIF TIMESTAMPDIFF(SECOND ,time_in, actual_time) >= 20 AND time_out IS NULL THEN
+            UPDATE timer SET access_out = actual_time WHERE id_person = id_user AND access_out IS NULL ;
             SET wasFound = 3;
+            LEAVE buscaHora;
 
             #Se va al almacen
-        ELSEIF TIME_TO_SEC(TIMEDIFF(time, time_stamp)) < 20 && id_user = @cosa THEN
+        ELSEIF TIMESTAMPDIFF(SECOND ,time_in, actual_time) < 20 AND time_out IS NULL THEN
             SET wasFound = 2;
-             #Se va a la office
-        ELSE
-            SET wasFound = 1;
+            LEAVE buscaHora;
 
         END IF;
 
@@ -83,11 +91,10 @@ BEGIN
 
 END
 $$
-
-
 DELIMITER ;
+
 #&&5
-CALL lsZon.masterControlBadge(1, @result);
+CALL lsZon.masterControlBadge('1234A', @result);
 
 #&&6
 SELECT @result;
