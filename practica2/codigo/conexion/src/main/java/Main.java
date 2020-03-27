@@ -13,12 +13,13 @@ public class Main {
     public static void main(String[] args) {
         Connect go = new Connect();
 
-        go.startRemoteConnection();
+        if(go.serverConnect()){
+            RetrieveInfo retrieve = new RetrieveInfo();
+            //retrieve.retrieveInfo();
+        }
 
 
-        RetrieveInfo retrieve = new RetrieveInfo();
 
-        retrieve.retrieveInfo();
 
     }
 

@@ -5,8 +5,6 @@ import Model.Settings;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import static com.jcraft.jsch.JSch.setConfig;
-
 
 /**
  * @author Eduardo Nolla
@@ -17,15 +15,22 @@ import static com.jcraft.jsch.JSch.setConfig;
 public class Connect {
 
 
+    private Connection connection;
 
-    private Connection remoteConnection;
 
-    public boolean startRemoteConnection(){
-        try{
+    public boolean serverConnect() {
+
+        try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            remoteConnection = DriverManager.getConnection("jdbc:mysql://"+ Settings.HOST+"/?user=" + Settings.REMOTEUSER + "&password=" + Settings.REMOTEPASSWORD + "&serverTimezone=UTC");
+             connection = DriverManager.getConnection("jdbc:mysql://"
+                    + Settings.HOST
+                    + "/?user="
+                    + Settings.USER
+                    + "&password="
+                    + Settings.PASSWORD);
+            System.out.println("Success!");
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
