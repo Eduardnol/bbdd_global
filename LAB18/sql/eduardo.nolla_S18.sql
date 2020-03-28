@@ -36,7 +36,7 @@ SELECT @result;
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS masterControlBadge $$
-CREATE PROCEDURE masterControlBadge(IN id_persona int , OUT wasFound int)
+CREATE PROCEDURE masterControlBadge(IN id_persona int, OUT wasFound int)
 BEGIN
 
     DECLARE done INT DEFAULT 0;
@@ -45,7 +45,7 @@ BEGIN
     DECLARE time_out DATETIME;
     DECLARE persona VARCHAR(5);
     DECLARE id_user INT;
-    DECLARE cur1 CURSOR FOR SELECT access_in, access_out,id_person FROM timer;
+    DECLARE cur1 CURSOR FOR SELECT access_in, access_out, id_person FROM timer;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
     SET id_user = id_persona;
     SET actual_time = now();
@@ -63,23 +63,21 @@ BEGIN
             SET wasFound = 1;
             LEAVE buscaHora;
         END IF;
-        IF time_in IS NULL THEN
 
-            #Sesion Abierta
-        IF TIMESTAMPDIFF(SECOND ,time_in, actual_time) >= 8 * 3600 AND time_out IS NULL THEN
+        #Sesion Abierta
+        IF TIMESTAMPDIFF(HOUR, time_in, actual_time) >= 8 AND time_out IS NULL THEN
             UPDATE timer SET access_out = '2000-01-01 00:00:00' WHERE id_person = id_user AND access_out IS NULL;
             SET wasFound = 0;
             LEAVE buscaHora;
-         end if;
 
             #Se va a casa
-        ELSEIF TIMESTAMPDIFF(SECOND ,time_in, actual_time) >= 20 AND time_out IS NULL THEN
-            UPDATE timer SET access_out = actual_time WHERE id_person = id_user AND access_out IS NULL ;
+        ELSEIF TIMESTAMPDIFF(SECOND, time_in, actual_time) >= 20 AND time_out IS NULL THEN
+            UPDATE timer SET access_out = actual_time WHERE id_person = id_user AND access_out IS NULL;
             SET wasFound = 3;
             LEAVE buscaHora;
 
             #Se va al almacen
-        ELSEIF TIMESTAMPDIFF(SECOND ,time_in, actual_time) < 20 AND time_out IS NULL THEN
+        ELSEIF TIMESTAMPDIFF(SECOND, time_in, actual_time) < 20 AND time_out IS NULL THEN
             SET wasFound = 2;
             LEAVE buscaHora;
 
