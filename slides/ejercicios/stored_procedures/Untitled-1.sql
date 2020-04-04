@@ -14,24 +14,19 @@ SELECT * FROM table;
 
 
 
-DELIMITER $$
+    OPEN cur1;
+    buscaHora:
+    LOOP
 
-DROP PROCEDURE IF EXISTS getId $$
+        IF done = 1 THEN
 
-CREATE PROCEDURE getId(IN id_card_in VARCHAR(5), OUT id_person_out INT)
-begin
+            LEAVE buscaHora;
+        END IF;
 
- SET id_person_out = (SELECT id_person
-                         FROM persona p
-                         WHERE p.id_card = id_card_in));
+        END IF;
 
- IF bla THEN
- 
-  bla bla bla 
- 
- END IF;
-
-end $$
+    END LOOP buscaHora;
+    CLOSE cur1;
 
 
 
