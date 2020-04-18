@@ -1,185 +1,114 @@
---#&&
-COPY Apartment
-FROM 'D:\OneDrive\Estudios\uni\Curso_2\bbdd\practica1\fase1\Fitxers P1-20191029\Apartments.csv' DELIMITER ',' QUOTE '"' CSV HEADER;
---Vamos A Evitar Las repeticiones masa básicas
-UPDATE Apartment SET state = UPPER(state);
-UPDATE Apartment SET state = 'VIC' WHERE state LIKE '%VI%';
-UPDATE Apartment SET city = INITCAP(city);
-UPDATE Apartment SET city = TRIM(city);
-UPDATE Apartment SET city = '%' WHERE city LIKE '%,';
-
 
 --#&&
-COPY Host_T
-FROM 'D:\OneDrive\Estudios\uni\Curso_2\bbdd\practica1\fase1\Fitxers P1-20191029\Hosts.csv' DELIMITER ',' QUOTE '"' CSV HEADER;
---#&&
-COPY Review
-FROM 'D:\OneDrive\Estudios\uni\Curso_2\bbdd\practica1\fase1\Fitxers P1-20191029\Review.csv' DELIMITER ',' QUOTE '"' CSV HEADER;
-
---#&&
-INSERT INTO Money(price, weekly_price, monthly_price, listing_url)
-SELECT price, weekly_price, monthly_price, listing_url FROM Apartment;
-
---#&&
-INSERT INTO Info(security_deposit, cleaning_fee, minimum_nights, maximum_nights, listing_url)
-SELECT security_deposit, cleaning_fee, minimum_nights, maximum_nights, listing_url FROM Apartment;
---#&&
-INSERT INTO PropertyType(nom)
-SELECT DISTINCT (Apartment.property_type) FROM Apartment; --Escogemos solamente un valor por cada tipo de propiedad y se le va a asignar un id
-
---#&&
-INSERT INTO Properties(accomodates, bathrooms, beds, square_feet, id_apartment, id_type)
-SELECT accomodate, bathroom, beds, square_feet, listing_url, id_type FROM Apartment, PropertyType WHERE propertytype.nom = Apartment.property_type; --A cada propiedad le pondremos el id_propiedad que le corresponda de acuerdo con el nombre de esta en la tabla
+SELECT c.nom, AVG(100 * (m.price * 7 + m.weekly_price) / m.weekly_price) AS savings
+FROM city as c,
+     money AS m,
+     host_info AS h,
+     apartment AS a,
+     neighbourhood AS n
+WHERE c.id_city = n.id_city
+  AND n.id_neighbourhood = a.id_neighbourhood
+  AND a.id_host = h.id_host
+  AND h.host_identity_verified = true
+  AND m.listing_url = a.listing_url
+GROUP BY c.nom, h.host_identity_verified
+ORDER BY savings ASC
+LIMIT 3;
 
 
 --#&&
---SELECT regexp_split_to_table(apartment.amenities, '}') FROM apartment;
+SELECT a.name, (m.price / p.square_feet) AS price_m2, COUNT(r.id_apartment) AS critica
+FROM apartment AS a,
+     money AS m,
+     reviews AS r,
+     properties AS p,
+     propertytype AS pt
+WHERE r.id_apartment = a.listing_url
+  AND m.listing_url = a.listing_url
+  AND a.listing_url = p.id_apartment
+  AND p.square_feet != 0
+  AND pt.nom = 'Guesthouse'
+  AND p.id_type = pt.id_type
+GROUP BY a.name, price_m2, a.listing_url
+HAVING COUNT(r.id_apartment) > 200
+ORDER BY price_m2
+    DESC;
 
 --#&&
-INSERT INTO Country (id_country, nom)
-SELECT DISTINCT (country_code), country FROM Apartment; --Agruparemos la tabla para tener los valores juntos de cada país
+SELECT a.name, a.listing_url, ((m.price * 6 * 5) + i.cleaning_fee + (i.security_deposit * 0.1)) AS precio
+FROM apartment AS a, money AS m, info AS i, host_info AS hi, properties AS p, neighbourhood AS n, propertytype AS pt
+WHERE
+        a.id_neighbourhood = n.id_neighbourhood
+    AND a.id_host = hi.id_host
+    AND p.id_type = pt.id_type
+    AND p.id_apartment = a.listing_url
+    AND m.listing_url = a.listing_url
+    AND i.listing_url = a.listing_url
+    AND p.bathrooms::float > 1.5
+    AND n.nom = 'Port Phillip'
+    AND hi.host_response_rate::int > 90
+    AND p.accomodates = 6
+    AND pt.nom = 'Apartment'
+    AND i.minimum_nights <= 5
+    AND i.maximum_nights >= 5
+    AND a.amenities LIKE '%Balcony%'
+    AND price IS NOT NULL
+    AND cleaning_fee IS NOT NULL
+    AND security_deposit IS NOT NULL
+ORDER BY precio
+LIMIT 1;
+---------------------------------------------------------------------------------------------
 --#&&
-INSERT INTO State (nom, id_country)
-SELECT DISTINCT (Apartment.state), Country.id_country FROM Apartment NATURAL JOIN Country;
-
---#&&
-INSERT INTO City (nom, id_state)
-SELECT DISTINCT (a.city), id_state
-FROM Apartment AS a, State AS s
-WHERE s.nom = a.state
-GROUP BY a.city, id_state;
-
-
-
---#&&
-ALTER TABLE Apartment DROP COLUMN id_apartment;
---#&&
-ALTER TABLE Apartment ADD id_neighbourhood INT;
---#&&
-ALTER TABLE Apartment ADD FOREIGN KEY (id_neighbourhood) REFERENCES Neighbourhood(id_neighbourhood); --Creamos una llave foranea para Apartment que tenga neighbourhood
-
-
-
---#&&
-INSERT INTO Neighbourhood(nom, id_city)
-SELECT neighbourhood, id_city FROM Apartment, City WHERE city.nom = Apartment.city
-GROUP BY neighbourhood, id_city;
-
-ALTER TABLE apartment ADD id_host varchar;
---ALTER TABLE apartment ADD FOREIGN KEY (id_host) REFERENCES host_t(host_url);
-
-
----------------------------------------------------------------------------------------------------------------------------------------------
---#&&
-UPDATE apartment
-SET id_neighbourhood = neighbourhood.id_neighbourhood FROM neighbourhood, city
-WHERE apartment.neighbourhood = neighbourhood.nom
-        AND apartment.city = city.nom
-        AND city.id_city = neighbourhood.id_city;
-
-
-
-UPDATE apartment
-SET id_host = host_t.host_url FROM host_t
-WHERE host_t.listing_url = apartment.listing_url;
-
---#&&
-INSERT INTO Reviewer(id_reviewer, reviewer_name)
-SELECT DISTINCT(r.id_reviewer), r.reviewer_name  FROM Review AS r, Apartment AS a
-WHERE r.listing_url = a.listing_url
-GROUP BY (r.id_reviewer, r.reviewer_name);
-
-ALTER TABLE Review ADD FOREIGN KEY (id_reviewer) REFERENCES Reviewer(id_reviewer);
+SELECT * , age(h.host_since) AS diferencia
+FROM host AS h
+WHERE '2019-12-30' - h.host_since >= 1825;
 
 
 --#&&
-INSERT INTO reviews(id_reviewer, id_apartment)
-SELECT review.id_reviewer, apartment.listing_url
-FROM Reviewer, review, apartment
-WHERE review.listing_url = apartment.listing_url AND reviewer.id_reviewer = review.id_reviewer;
-
-
---DROPS
-
-ALTER TABLE Apartment DROP COLUMN picture_url;
---ALTER TABLE Apartment DROP COLUMN street;
-ALTER TABLE Apartment DROP COLUMN neighbourhood;
-ALTER TABLE Apartment DROP COLUMN city;
-ALTER TABLE Apartment DROP COLUMN state;
-ALTER TABLE Apartment DROP COLUMN zipcode;
-ALTER TABLE Apartment DROP COLUMN country_code;
-ALTER TABLE Apartment DROP COLUMN country;
-ALTER TABLE Apartment DROP COLUMN property_type;
-ALTER TABLE Apartment DROP COLUMN accomodate;
-ALTER TABLE Apartment DROP COLUMN bathroom;
-ALTER TABLE Apartment DROP COLUMN bedrooms;
-ALTER TABLE Apartment DROP COLUMN beds;
---ALTER TABLE Apartment DROP COLUMN amenities;
-ALTER TABLE Apartment DROP COLUMN square_feet;
-ALTER TABLE Apartment DROP COLUMN price;
-ALTER TABLE Apartment DROP COLUMN weekly_price;
-ALTER TABLE Apartment DROP COLUMN monthly_price;
-ALTER TABLE Apartment DROP COLUMN security_deposit;
-ALTER TABLE Apartment DROP COLUMN cleaning_fee;
-ALTER TABLE Apartment DROP COLUMN minimum_nights;
-ALTER TABLE Apartment DROP COLUMN maximum_nights;
-UPDATE money set monthly_price = replace(monthly_price,'$', '');
-UPDATE money set price = replace(price, '$', '');
-UPDATE money set weekly_price = replace(weekly_price,'$', '');
-UPDATE money set monthly_price = replace(monthly_price,',', '');
-UPDATE money set price = replace(price, ',', '');
-UPDATE money set weekly_price = replace(weekly_price,',', '');
-
-
-SELECT * FROM host_info where host_response_rate like 'N/A';
-
-
-
-UPDATE info SET security_deposit = replace(security_deposit,'$', '');
-UPDATE info SET cleaning_fee = replace(cleaning_fee,'$', '');
-UPDATE info SET security_deposit = replace(security_deposit,',', '');
-UPDATE info SET cleaning_fee = replace(cleaning_fee,',', '');
-ALTER TABLE info ALTER COLUMN cleaning_fee TYPE float4 USING cleaning_fee::float;
-ALTER TABLE info ALTER COLUMN security_deposit TYPE float4 USING security_deposit::float;
-
-
-
-ALTER TABLE money ALTER COLUMN monthly_price TYPE float4 USING monthly_price::float;
-ALTER TABLE money ALTER COLUMN price TYPE float4 USING price::float;
-ALTER TABLE money ALTER COLUMN weekly_price TYPE float4 USING weekly_price::float;
-
-INSERT INTO Host(host_url, host_name, host_since, host_about) SELECT DISTINCT (host_url), host_name, host_since, host_about FROM Host_T;
+SELECT a.street, COUNT(a.listing_url) AS num, AVG(m.price) AS precio
+FROM apartment AS a, money AS m, properties AS p, propertytype AS pt
+WHERE a.listing_url = m.listing_url AND a.listing_url = p.id_apartment AND p.id_type = pt.id_type
+GROUP BY a.street
+HAVING AVG(m.price) < 100
+ORDER BY num
+DESC
+LIMIT 3;
 
 --#&&
-INSERT INTO Host_Info(id_host, host_picture_url, host_response_rate, host_is_superhost, host_listings_count, host_verifications, host_identity_verified)
-SELECT h.host_url, h.host_picture_url, h.host_response_rate, h.host_is_superhost, h.host_listings_count, h.host_verifications, h.host_identity_verified
-FROM Host_T as h
-GROUP BY ( host_url, host_picture_url, host_response_rate, host_is_superhost, host_listings_count, host_verifications, host_identity_verified);
+SELECT rr.reviewer_name, rs.id_apartment, COUNT(rs.id_apartment) AS num_reviews
+FROM reviewer AS rr,
+     reviews as rs,
+     apartment AS a
+WHERE rr.id_reviewer = rs.id_reviewer
+  AND a.listing_url = rs.id_apartment
+GROUP BY rs.id_apartment, rr.id_reviewer, rr.reviewer_name
+ORDER BY num_reviews
+    DESC, rr.reviewer_name desc
+LIMIT 3;
 
-UPDATE host_info set host_response_rate = replace(host_response_rate, RIGHT(host_response_rate, 1), '');
-UPDATE host_info set host_response_rate = replace(host_response_rate,'N/', '0');
+--#&&
 
-ALTER TABLE Host_T DROP COLUMN name;
-ALTER TABLE Host_T DROP COLUMN listing_url;
-ALTER TABLE Host_T DROP COLUMN description;
-ALTER TABLE Host_T DROP COLUMN picture_url;
-ALTER TABLE Host_T DROP COLUMN host_response_time;
-ALTER TABLE Host_T DROP COLUMN host_response_rate;
-ALTER TABLE Host_T DROP COLUMN host_is_superhost;
-ALTER TABLE Host_T DROP COLUMN host_picture_url;
-ALTER TABLE Host_T DROP COLUMN host_listings_count;
-ALTER TABLE Host_T DROP COLUMN host_verifications;
-ALTER TABLE Host_T DROP COLUMN host_identity_verified;
+SELECT a.name, ((2 * 2 * m.price) + i.cleaning_fee + (i.security_deposit * 0.1)) AS price
+FROM apartment AS a, money AS m, city AS c, neighbourhood AS n, host AS h, host_info AS hi, properties AS p, info AS i, propertytype AS pt
+WHERE  m.listing_url = a.listing_url
+    AND i.listing_url = a.listing_url
+    AND hi.id_host = h.host_url
+    AND h.host_url = a.id_host
+    AND p.id_apartment = a.listing_url
+    AND c.id_city = n.id_city
+    AND a.id_neighbourhood = n.id_neighbourhood
+    AND pt.id_type = p.id_type
+    AND c.nom = 'Saint Kilda'
+    AND a.amenities LIKE '%Kitchen%'
+    AND hi.host_verifications LIKE '%phone%'
+    AND pt.nom = 'Apartment'
+    AND p.accomodates >= 2
+    AND p.beds >= 2
+    AND ((2 * 2 * m.price) + i.cleaning_fee + (i.security_deposit * 0.1)) <= 5000
+    AND i.maximum_nights >= 2
+    AND i.minimum_nights <= 2
+GROUP BY a.name, ((2 * 2 * m.price) + i.cleaning_fee + (i.security_deposit * 0.1))
+ORDER BY price
+DESC;
 
-DROP TABLE Host_T;
-
-ALTER TABLE Review DROP COLUMN id_apartment;
-ALTER TABLE Review DROP COLUMN listing_url;
-ALTER TABLE Review DROP COLUMN name;
-ALTER TABLE Review DROP COLUMN description;
-ALTER TABLE Review DROP COLUMN picture_url;
-ALTER TABLE Review DROP COLUMN street;
-ALTER TABLE Review DROP COLUMN neighbourhood_cleansed;
-ALTER TABLE Review DROP COLUMN city;
-ALTER TABLE Review DROP COLUMN reviewer_name;
 
