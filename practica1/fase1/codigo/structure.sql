@@ -16,7 +16,8 @@ DROP TABLE IF EXISTS Host_T CASCADE;
 DROP TABLE IF EXISTS Host_Info CASCADE;
 DROP TABLE IF EXISTS Host CASCADE;
 DROP TABLE IF EXISTS Review CASCADE;
-DROP TABLE IF EXISTS Apartment_Import CASCADE ;
+
+DROP TABLE IF EXISTS Apartment_Import CASCADE;
 DROP TABLE IF EXISTS Host_Import CASCADE;
 DROP TABLE IF EXISTS Review_Import CASCADE;
 
@@ -90,17 +91,40 @@ CREATE TABLE Review_Import
     comments               text
 );
 
-CREATE TABLE Apartment(
-    listing_url varchar(255),
-    name varchar(255),
-    description text,
-    id_neighbourhood int,
-    id_host varchar(255),
-    PRIMARY KEY (listing_url),
-    FOREIGN KEY (id_host) REFERENCES Host (host_url),
-    FOREIGN KEY (id_neighbourhood) REFERENCES Neighbourhood(id_neighbourhood)
+
+CREATE TABLE Country
+(
+    id_country varchar,
+    nom        varchar,
+    PRIMARY KEY (id_country)
 );
 
+CREATE TABLE State
+(
+    id_state   SERIAL,
+    nom        varchar,
+    id_country varchar,
+    PRIMARY KEY (id_state),
+    FOREIGN KEY (id_country) REFERENCES Country (id_country)
+);
+
+CREATE TABLE City
+(
+    id_city  SERIAL,
+    nom      varchar,
+    id_state int,
+    PRIMARY KEY (id_city),
+    FOREIGN KEY (id_state) REFERENCES State (id_state)
+);
+
+CREATE TABLE Neighbourhood
+(
+    id_neighbourhood SERIAL,
+    nom              varchar,
+    id_city          integer,
+    PRIMARY KEY (id_neighbourhood),
+    FOREIGN KEY (id_city) REFERENCES City (id_city)
+);
 CREATE TABLE Host
 (
     host_url   varchar,
@@ -110,10 +134,35 @@ CREATE TABLE Host
     PRIMARY KEY (host_url)
 );
 
-CREATE TABLE Review (
-    id_review SERIAL,
+CREATE TABLE Apartment
+(
+    listing_url      varchar(255),
+    name             varchar(255),
+    description      text,
+    id_neighbourhood int,
+    id_host          varchar(255),
+    street           varchar(255),
+    amenities        text,
+    PRIMARY KEY (listing_url),
+    FOREIGN KEY (id_host) REFERENCES Host (host_url),
+    FOREIGN KEY (id_neighbourhood) REFERENCES Neighbourhood (id_neighbourhood)
+);
+
+CREATE TABLE Reviewer
+(
+    id_reviewer   SERIAL,
+    reviewer_name varchar,
+    PRIMARY KEY (id_reviewer)
+);
+
+CREATE TABLE Review
+(
+    id_review   SERIAL,
+    id_reviewer INT,
     date_review DATE,
-    comments text
+    comments    text,
+    PRIMARY KEY (id_review),
+    FOREIGN KEY (id_reviewer) REFERENCES reviewer (id_reviewer)
 );
 
 CREATE TABLE Money
@@ -161,40 +210,6 @@ CREATE TABLE Properties
     FOREIGN KEY (id_type) REFERENCES PropertyType (id_type)
 );
 
-CREATE TABLE Country
-(
-    id_country varchar,
-    nom        varchar,
-    PRIMARY KEY (id_country)
-);
-
-CREATE TABLE State
-(
-    id_state   SERIAL,
-    nom        varchar,
-    id_country varchar,
-    PRIMARY KEY (id_state),
-    FOREIGN KEY (id_country) REFERENCES Country (id_country)
-);
-
-CREATE TABLE City
-(
-    id_city  SERIAL,
-    nom      varchar,
-    id_state int,
-    PRIMARY KEY (id_city),
-    FOREIGN KEY (id_state) REFERENCES State (id_state)
-);
-
-CREATE TABLE Neighbourhood
-(
-    id_neighbourhood SERIAL,
-    nom              varchar,
-    id_city          integer,
-    PRIMARY KEY (id_neighbourhood),
-    FOREIGN KEY (id_city) REFERENCES City (id_city)
-);
-
 CREATE TABLE Amenities
 (
     id_amenities  SERIAL,
@@ -203,13 +218,6 @@ CREATE TABLE Amenities
     PRIMARY KEY (id_amenities),
     FOREIGN KEY (id_properties) REFERENCES Properties (id_properties)
 
-);
-
-CREATE TABLE Reviewer
-(
-    id_reviewer   SERIAL,
-    reviewer_name varchar,
-    PRIMARY KEY (id_reviewer)
 );
 
 CREATE TABLE Reviews
