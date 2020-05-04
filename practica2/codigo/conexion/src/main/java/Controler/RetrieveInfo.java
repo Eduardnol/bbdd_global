@@ -2,9 +2,11 @@ package Controler;
 
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+
+
+import com.mysql.cj.protocol.Resultset;
+
+import java.sql.*;
 
 /**
  * @author Eduardo Nolla
@@ -13,23 +15,57 @@ import java.sql.SQLException;
  */
 
 public class RetrieveInfo {
-    private Connection conn1 = null;
-    private String url = "jdbc:mysql://localhost:3306";
-    private String user = "lsmotor_user";
-    private String password = "lsmotor_bbdd";
-    private Connection conexion = null;
+    private Connect conn = null;
+//    private String url = "jdbc:mysql://localhost:3306";
+//    private String user = "lsmotor_user";
+//    private String password = "lsmotor_bbdd";
+//    private Connection conexion = null;
+
+    private Statement statement = null;
+    private PreparedStatement resultset = null;
+
+    private Statement statementLocal = null;
+    private ResultSet resultsetLocal = null;
+
+
+    public RetrieveInfo(Connect conn) {
+
+        this.conn = conn;
+    }
 
 
     public void retrieveInfo(){
 
-        try{
-            conexion = DriverManager.getConnection(url, user, password);
 
-        }
-        catch (SQLException e) {
+        String[] local = {"circuits", "constructorResults", "constructorStandings", "constructors",
+                "driverStandings", "drivers", "lapTimes", "pitStops", "qualifying", "races", "results", "Seasons", "Status"};
+
+
+
+
+        try {
+            statement = conn.getConnection().createStatement();
+            statementLocal = conn.getLocal().createStatement();
+
+            statementLocal.execute("DROP DATABASE IF EXISTS F1");
+            statementLocal.execute("CREATE DATABASE F1");
+            statementLocal.execute("USE F1");
+
+            for (String s : local) {
+
+                resultset = conn.prepareStatement("SELECT * FROM " + s);
+                statementLocal.execute("CREATE TABLE " + s );
+
+            }
+
+
+        } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("ERROR MySql");
         }
+
+
+            //CREATE DATABASE new database SELECT * FROM circuits;
+
 
 
     }
