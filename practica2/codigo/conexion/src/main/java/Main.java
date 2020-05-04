@@ -13,11 +13,11 @@ public class Main {
     public static void main(String[] args) {
         Connect go = new Connect();
 
-        if(go.serverConnect() && go.localConnect()){
-            RetrieveInfo retrieve = new RetrieveInfo(go);
+        //if(go.serverConnect() && go.localConnect()){
+            RetrieveInfo retrieve = new RetrieveInfo();
             retrieve.retrieveInfo();
             System.out.println("Success");
-        }
+    //    }
 
 
 
