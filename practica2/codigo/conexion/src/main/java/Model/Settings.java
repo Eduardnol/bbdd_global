@@ -9,7 +9,7 @@ public interface Settings {
 
         public static final String USER_LOCAL = "root";
         public static final String PASSWORD_LOCAL = "1234";
-        public static final String LOCAL_HOST = "jdbc:mysql://localhost/";
+        public static final String LOCAL_HOST = "jdbc:mysql://localhost/F1";
 
 
 

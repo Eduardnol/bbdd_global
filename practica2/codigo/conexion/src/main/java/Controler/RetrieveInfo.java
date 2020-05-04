@@ -2,10 +2,11 @@ package Controler;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
+
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.*;
 
 import static Model.Settings.*;
 
@@ -24,7 +25,7 @@ public class RetrieveInfo {
 //    private Connection conexion = null;
 
     private Statement statement = null;
-    private PreparedStatement resultset = null;
+    private Statement resultset = null;
 
     private Statement statementLocal = null;
     private ResultSet resultsetLocal = null;
@@ -45,13 +46,11 @@ public class RetrieveInfo {
     }
 
 
-    public void retrieveInfo(){
+    public void retrieveInfo() {
 
 
         String[] local = {"circuits", "constructorResults", "constructorStandings", "constructors",
                 "driverStandings", "drivers", "lapTimes", "pitStops", "qualifying", "races", "results", "Seasons", "Status"};
-
-
 
 
         try {
@@ -64,9 +63,10 @@ public class RetrieveInfo {
 
             for (String s : local) {
 
-                resultset = conn.prepareStatement("SELECT * FROM " + s);
-                statementLocal.execute("CREATE TABLE " + s );
-
+            statement.execute("SELECT * FROM " + HOST + "." + s + " CREATE TABLE " +
+                        LOCAL_HOST + "." + s);
+                //statementLocal.execute();
+                System.out.println("Pericion Enviada");
             }
 
 
@@ -75,8 +75,7 @@ public class RetrieveInfo {
         }
 
 
-            //CREATE DATABASE new database SELECT * FROM circuits;
-
+        //CREATE DATABASE new database SELECT * FROM circuits;
 
 
     }
