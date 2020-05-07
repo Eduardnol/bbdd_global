@@ -17,32 +17,27 @@ import static Model.Settings.*;
  */
 
 public class RetrieveInfo {
-    private Connection conn = null;
-    private Connection connLocal = null;
+    private Connect connect;
+//    private Connection conn = null;
+//    private Connection connLocal = null;
 //    private String url = "jdbc:mysql://localhost:3306";
 //    private String user = "lsmotor_user";
 //    private String password = "lsmotor_bbdd";
 //    private Connection conexion = null;
 
-    private Statement statement = null;
-    private Statement resultset = null;
+//    private Statement statement = null;
+//    private Statement resultset = null;
+//
+//    private Statement statementLocal = null;
+//    private ResultSet resultsetLocal = null;
 
-    private Statement statementLocal = null;
-    private ResultSet resultsetLocal = null;
+    String query = null;
 
 
     public RetrieveInfo() {
 
-        try {
-            Class.forName("com.mysql.jdbc.Connection");
-            this.conn = (Connection) DriverManager.getConnection(HOST, USER, PASSWORD);
-            this.connLocal = (Connection) DriverManager.getConnection(LOCAL_HOST, USER_LOCAL, PASSWORD_LOCAL);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Error al conectar");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+       this.connect = new Connect();
+
     }
 
 
@@ -52,26 +47,31 @@ public class RetrieveInfo {
         String[] local = {"circuits", "constructorResults", "constructorStandings", "constructors",
                 "driverStandings", "drivers", "lapTimes", "pitStops", "qualifying", "races", "results", "Seasons", "Status"};
 
+        connect.connectDatabases();
 
-        try {
-            statement = (Statement) conn.createStatement();
-            statementLocal = (Statement) connLocal.createStatement();
 
-            statementLocal.execute("DROP DATABASE IF EXISTS F1");
-            statementLocal.execute("CREATE DATABASE F1");
-            statementLocal.execute("USE F1");
+   //     try {
+//            statement = (Statement) conn.createStatement();
+//            statementLocal = (Statement) connLocal.createStatement();
+//
+//            statementLocal.execute("DROP DATABASE IF EXISTS F1");
+//            statementLocal.execute("CREATE DATABASE F1");
+//            statementLocal.execute("USE F1");
 
             for (String s : local) {
 
-            statement.execute("SELECT * FROM " + HOST + "." + s + " CREATE TABLE " +
-                        LOCAL_HOST + "." + s);
-                //statementLocal.execute();
+            query = "CREATE TABLE " + "localhost.F1" + "." + s + " LIKE " + "f1" + "." + s;
+            query = "SELECT * from " + s;
+
+            ResultSet resultSet = connect.selectQuery(query, connect.getRemote());
+
+
                 System.out.println("Pericion Enviada");
             }
 
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+       // } catch (SQLException e) {
+     //       e.printStackTrace();
         }
 
 
@@ -79,4 +79,4 @@ public class RetrieveInfo {
 
 
     }
-}
+
