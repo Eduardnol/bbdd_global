@@ -1,13 +1,12 @@
 package pojo;
 
-import com.google.gson.annotations.SerializedName;
+
 
 public class Status{
 
-	@SerializedName("statusId")
+
 	private int statusId;
 
-	@SerializedName("status")
 	private String status;
 
 	public void setStatusId(int statusId){

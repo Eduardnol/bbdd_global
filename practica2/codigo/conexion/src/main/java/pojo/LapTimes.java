@@ -1,25 +1,24 @@
 package pojo;
 
-import com.google.gson.annotations.SerializedName;
+
 
 public class LapTimes{
 
-	@SerializedName("raceId")
+
 	private int raceId;
 
-	@SerializedName("milliseconds")
+
 	private int milliseconds;
 
-	@SerializedName("driverId")
+
 	private int driverId;
 
-	@SerializedName("lap")
+
 	private int lap;
 
-	@SerializedName("position")
+
 	private int position;
 
-	@SerializedName("time")
 	private String time;
 
 	public void setRaceId(int raceId){

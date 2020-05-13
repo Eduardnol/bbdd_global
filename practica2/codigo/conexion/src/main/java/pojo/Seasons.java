@@ -1,13 +1,11 @@
 package pojo;
 
-import com.google.gson.annotations.SerializedName;
+
 
 public class Seasons{
 
-	@SerializedName("year")
-	private int year;
 
-	@SerializedName("url")
+	private int year;
 	private String url;
 
 	public void setYear(int year){

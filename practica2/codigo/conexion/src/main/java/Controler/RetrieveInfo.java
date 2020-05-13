@@ -1,14 +1,13 @@
 package Controler;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.Statement;
+import com.opencsv.CSVWriter;
+import com.opencsv.ResultSetHelperService;
 
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import static Model.Settings.*;
 
 /**
  * @author Eduardo Nolla
@@ -18,65 +17,61 @@ import static Model.Settings.*;
 
 public class RetrieveInfo {
     private Connect connect;
-//    private Connection conn = null;
-//    private Connection connLocal = null;
-//    private String url = "jdbc:mysql://localhost:3306";
-//    private String user = "lsmotor_user";
-//    private String password = "lsmotor_bbdd";
-//    private Connection conexion = null;
-
-//    private Statement statement = null;
-//    private Statement resultset = null;
-//
-//    private Statement statementLocal = null;
-//    private ResultSet resultsetLocal = null;
-
-    String query = null;
+    private String path;
 
 
     public RetrieveInfo() {
 
-       this.connect = new Connect();
+        this.connect = new Connect();
 
     }
 
 
-    public void retrieveInfo() {
-
+    public void retrieveInfo() throws SQLException {
 
         String[] local = {"circuits", "constructorResults", "constructorStandings", "constructors",
-                "driverStandings", "drivers", "lapTimes", "pitStops", "qualifying", "races", "results", "Seasons", "Status"};
+                "driverStandings", "drivers", "lapTimes", "pitStops", "qualifying", "races", "results", "seasons", "status"};
 
         connect.connectDatabases();
 
 
-   //     try {
-//            statement = (Statement) conn.createStatement();
-//            statementLocal = (Statement) connLocal.createStatement();
-//
-//            statementLocal.execute("DROP DATABASE IF EXISTS F1");
-//            statementLocal.execute("CREATE DATABASE F1");
-//            statementLocal.execute("USE F1");
+        try {
+            for (int i = 0; i < local.length; i++) {
+                String query = "SELECT * FROM " + local[i];
+                ResultSet resultSet = connect.selectQuery(query, connect.getRemote());
+                CSVWriter file = new CSVWriter(new FileWriter("src/main/resources/info.csv"));
+                //Hacemos un result set helper service para indicarle el formato en el que esta la fecha
+                ResultSetHelperService resultSetHelperService = new ResultSetHelperService();
+                resultSetHelperService.setDateFormat("yyyy-MM-dd");
 
-            for (String s : local) {
-
-            query = "CREATE TABLE " + "localhost.F1" + "." + s + " LIKE " + "f1" + "." + s;
-            query = "SELECT * from " + s;
-
-            ResultSet resultSet = connect.selectQuery(query, connect.getRemote());
-
-
-                System.out.println("Pericion Enviada");
+                //Incorporamos el servicio de result set a nuestro CSVWriter
+                file.setResultService(resultSetHelperService);
+                //importamos el resultSet
+                file.writeAll(resultSet, false, false, true);
+                //Escribimos el csv resultante
+                path = new File("src/main/resources/info.csv").getAbsolutePath();
+                insertInfo(local[i]);
             }
 
 
-       // } catch (SQLException e) {
-     //       e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
-        //CREATE DATABASE new database SELECT * FROM circuits;
+    }
+
+
+    /**
+     * Inserts all the information from the classes to the database
+     */
+    public void insertInfo(String table) {
+
+        path = path.replaceAll("\\\\", "/");
+        connect.importar(table, path, connect.getLocal());
 
 
     }
+
+}
 

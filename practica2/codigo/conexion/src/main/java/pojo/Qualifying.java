@@ -1,34 +1,30 @@
 package pojo;
 
-import com.google.gson.annotations.SerializedName;
+
 
 public class Qualifying{
 
-	@SerializedName("q1")
+
 	private String q1;
 
-	@SerializedName("raceId")
 	private int raceId;
 
-	@SerializedName("number")
+
 	private int number;
 
-	@SerializedName("q2")
+
 	private String q2;
 
-	@SerializedName("q3")
+
 	private String q3;
 
-	@SerializedName("driverId")
 	private int driverId;
 
-	@SerializedName("qualifyId")
 	private int qualifyId;
 
-	@SerializedName("constructorId")
 	private int constructorId;
 
-	@SerializedName("position")
+
 	private int position;
 
 	public void setQ1(String q1){

@@ -1,121 +1,151 @@
 package pojo;
 
-import com.google.gson.annotations.SerializedName;
+public class Drivers {
 
-public class Drivers{
 
-	@SerializedName("number")
-	private int number;
+    private int number;
 
-	@SerializedName("forename")
-	private String forename;
+    private String forename;
 
-	@SerializedName("code")
-	private String code;
+    private String code;
 
-	@SerializedName("driverId")
-	private int driverId;
+    private int driverId;
 
-	@SerializedName("driverRef")
-	private String driverRef;
+    private String driverRef;
 
-	@SerializedName("nationality")
-	private String nationality;
+    private String nationality;
 
-	@SerializedName("surname")
-	private String surname;
+    private String surname;
 
-	@SerializedName("dob")
-	private String dob;
 
-	@SerializedName("url")
-	private String url;
+    private String dob;
 
-	public void setNumber(int number){
-		this.number = number;
-	}
 
-	public int getNumber(){
-		return number;
-	}
+    private String url;
 
-	public void setForename(String forename){
-		this.forename = forename;
-	}
 
-	public String getForename(){
-		return forename;
-	}
+    public void setNumber(int number) {
 
-	public void setCode(String code){
-		this.code = code;
-	}
+        this.number = number;
+    }
 
-	public String getCode(){
-		return code;
-	}
 
-	public void setDriverId(int driverId){
-		this.driverId = driverId;
-	}
+    public int getNumber() {
 
-	public int getDriverId(){
-		return driverId;
-	}
+        return number;
+    }
 
-	public void setDriverRef(String driverRef){
-		this.driverRef = driverRef;
-	}
 
-	public String getDriverRef(){
-		return driverRef;
-	}
+    public void setForename(String forename) {
 
-	public void setNationality(String nationality){
-		this.nationality = nationality;
-	}
+        this.forename = forename;
+    }
 
-	public String getNationality(){
-		return nationality;
-	}
 
-	public void setSurname(String surname){
-		this.surname = surname;
-	}
+    public String getForename() {
 
-	public String getSurname(){
-		return surname;
-	}
+        return forename;
+    }
 
-	public void setDob(String dob){
-		this.dob = dob;
-	}
 
-	public String getDob(){
-		return dob;
-	}
+    public void setCode(String code) {
 
-	public void setUrl(String url){
-		this.url = url;
-	}
+        this.code = code;
+    }
 
-	public String getUrl(){
-		return url;
-	}
 
-	@Override
- 	public String toString(){
-		return 
-			"Drivers{" + 
-			"number = '" + number + '\'' + 
-			",forename = '" + forename + '\'' + 
-			",code = '" + code + '\'' + 
-			",driverId = '" + driverId + '\'' + 
-			",driverRef = '" + driverRef + '\'' + 
-			",nationality = '" + nationality + '\'' + 
-			",surname = '" + surname + '\'' + 
-			",dob = '" + dob + '\'' + 
-			",url = '" + url + '\'' + 
-			"}";
-		}
+    public String getCode() {
+
+        return code;
+    }
+
+
+    public void setDriverId(int driverId) {
+
+        this.driverId = driverId;
+    }
+
+
+    public int getDriverId() {
+
+        return driverId;
+    }
+
+
+    public void setDriverRef(String driverRef) {
+
+        this.driverRef = driverRef;
+    }
+
+
+    public String getDriverRef() {
+
+        return driverRef;
+    }
+
+
+    public void setNationality(String nationality) {
+
+        this.nationality = nationality;
+    }
+
+
+    public String getNationality() {
+
+        return nationality;
+    }
+
+
+    public void setSurname(String surname) {
+
+        this.surname = surname;
+    }
+
+
+    public String getSurname() {
+
+        return surname;
+    }
+
+
+    public void setDob(String dob) {
+
+        this.dob = dob;
+    }
+
+
+    public String getDob() {
+
+        return dob;
+    }
+
+
+    public void setUrl(String url) {
+
+        this.url = url;
+    }
+
+
+    public String getUrl() {
+
+        return url;
+    }
+
+
+    @Override
+    public String toString() {
+
+        return
+                "Drivers{" +
+                        "number = '" + number + '\'' +
+                        ",forename = '" + forename + '\'' +
+                        ",code = '" + code + '\'' +
+                        ",driverId = '" + driverId + '\'' +
+                        ",driverRef = '" + driverRef + '\'' +
+                        ",nationality = '" + nationality + '\'' +
+                        ",surname = '" + surname + '\'' +
+                        ",dob = '" + dob + '\'' +
+                        ",url = '" + url + '\'' +
+                        "}";
+    }
 }

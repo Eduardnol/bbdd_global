@@ -1,61 +1,58 @@
 package pojo;
 
-import com.google.gson.annotations.SerializedName;
+
 
 public class Results{
 
-	@SerializedName("raceId")
+
 	private int raceId;
 
-	@SerializedName("milliseconds")
+
 	private int milliseconds;
 
-	@SerializedName("resultId")
+
 	private int resultId;
 
-	@SerializedName("constructorId")
+
 	private int constructorId;
 
-	@SerializedName("laps")
+
 	private int laps;
 
-	@SerializedName("positionOrder")
+
 	private int positionOrder;
 
-	@SerializedName("points")
 	private int points;
 
-	@SerializedName("number")
 	private int number;
 
-	@SerializedName("positionText")
 	private String positionText;
 
-	@SerializedName("fastestLapSpeed")
+
 	private String fastestLapSpeed;
 
-	@SerializedName("driverId")
+
 	private int driverId;
 
-	@SerializedName("statusId")
+
 	private int statusId;
 
-	@SerializedName("grid")
+
 	private int grid;
 
-	@SerializedName("rank")
+
 	private int rank;
 
-	@SerializedName("position")
+
 	private int position;
 
-	@SerializedName("time")
+
 	private String time;
 
-	@SerializedName("fastestLapTime")
+
 	private String fastestLapTime;
 
-	@SerializedName("fastestLap")
+
 	private int fastestLap;
 
 	public void setRaceId(int raceId){

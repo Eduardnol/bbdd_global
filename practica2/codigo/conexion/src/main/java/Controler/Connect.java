@@ -4,7 +4,6 @@ package Controler;
 import java.sql.*;
 
 import static Model.Settings.*;
-import static Model.Settings.PASSWORD_LOCAL;
 
 
 /**
@@ -40,12 +39,11 @@ public class Connect {
     private Statement s;
 
 
-
-
     public Connection getRemote() {
 
         return remote;
     }
+
 
     public Connection getLocal() {
 
@@ -60,6 +58,7 @@ public class Connect {
 
 
     public void connectDatabases() {
+
         try {
             //Realizamos la conexion a las dos bases de datos
             Class.forName("com.mysql.jdbc.Connection");
@@ -78,14 +77,16 @@ public class Connect {
 
     /**
      * Inserts a query passed as a parameter to the connected database
+     *
      * @param query String of the query to be executed to the database
      * @return Boolean true -> Execution Successfull
-     *                  false -> ERROR while executing
+     * false -> ERROR while executing
      */
 
-    public boolean insertQuery(String query, Connection database){
+    public boolean insertQuery(String query, Connection database) {
+
         try {
-            s =(Statement) database.createStatement();
+            s = (Statement) database.createStatement();
             s.executeUpdate(query);
             return true;
 
@@ -96,9 +97,11 @@ public class Connect {
 
     }
 
-    public void updateQuery(String query, Connection database){
+
+    public void updateQuery(String query, Connection database) {
+
         try {
-            s =(Statement) database.createStatement();
+            s = (Statement) database.createStatement();
             s.executeUpdate(query);
 
         } catch (SQLException ex) {
@@ -106,9 +109,11 @@ public class Connect {
         }
     }
 
-    public void deleteQuery(String query, Connection database){
+
+    public void deleteQuery(String query, Connection database) {
+
         try {
-            s =(Statement) database.createStatement();
+            s = (Statement) database.createStatement();
             s.executeUpdate(query);
 
         } catch (SQLException ex) {
@@ -120,14 +125,16 @@ public class Connect {
 
     /**
      * Function to execute Select queries to the database
+     *
      * @param query String containing the query to be executed
      * @return The information returned by the Database
      */
-    public ResultSet selectQuery(String query, Connection database){
+    public ResultSet selectQuery(String query, Connection database) {
+
         ResultSet rs = null;
         try {
             s = (Statement) database.createStatement();
-            rs = s.executeQuery (query);
+            rs = s.executeQuery(query);
 
         } catch (SQLException ex) {
             System.out.println("Problema al Recuperar les dades --> " + ex.getSQLState());
@@ -140,12 +147,27 @@ public class Connect {
      * Order to disconnect from the database
      */
 
-    public void disconnect( Connection database){
+    public void disconnect(Connection database) {
+
         try {
             database.close();
             System.out.println("Desconnectat!");
         } catch (SQLException e) {
             System.out.println("Problema al tancar la connexió --> " + e.getSQLState());
+        }
+    }
+
+
+    public void importar(String tabla, String path, Connection database) {
+
+        String query = ("LOAD  DATA LOCAL INFILE '" + path + "' INTO TABLE " + tabla + " CHARACTER SET 'utf8'" + " FIELDS TERMINATED BY ',' ENCLOSED BY'\\\"'" +
+                "LINES TERMINATED BY '\n';");
+
+        try {
+            s = (Statement) database.createStatement();
+            s.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
