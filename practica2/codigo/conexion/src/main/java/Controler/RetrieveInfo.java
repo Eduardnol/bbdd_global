@@ -47,7 +47,8 @@ public class RetrieveInfo {
                 //Incorporamos el servicio de result set a nuestro CSVWriter
                 file.setResultService(resultSetHelperService);
                 //importamos el resultSet
-                file.writeAll(resultSet, false, false, true);
+                file.writeAll(resultSet, true, false, false);
+                file.close();
                 //Escribimos el csv resultante
                 path = new File("src/main/resources/info.csv").getAbsolutePath();
                 insertInfo(local[i]);
