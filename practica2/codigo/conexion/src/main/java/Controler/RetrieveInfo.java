@@ -29,8 +29,14 @@ public class RetrieveInfo {
 
     public void retrieveInfo() throws SQLException {
 
-        String[] local = {"circuits", "constructorResults", "constructorStandings", "constructors",
-                "driverStandings", "drivers", "lapTimes", "pitStops", "qualifying", "races", "results", "seasons", "status"};
+//        String[] local = {"circuits", "constructorResults", "constructorStandings", "constructors",
+//                "driverStandings", "drivers", "lapTimes", "pitStops", "qualifying", "races", "results", "seasons", "status"};
+
+//        String[] local = {"", "", "", "",
+//                "", "", "", "", "", "", "", "", ""};
+
+        String[] local = {"drivers", "constructors", "races", "circuits",
+                "seasons", "lapTimes", "pitStops"};// ,"constructorResults", "constructorStandings", "driverStandings", "qualifying", "results", "status"};
 
         connect.connectDatabases();
 
@@ -40,12 +46,14 @@ public class RetrieveInfo {
                 String query = "SELECT * FROM " + local[i];
                 ResultSet resultSet = connect.selectQuery(query, connect.getRemote());
                 CSVWriter file = new CSVWriter(new FileWriter("src/main/resources/info.csv"));
+
                 //Hacemos un result set helper service para indicarle el formato en el que esta la fecha
                 ResultSetHelperService resultSetHelperService = new ResultSetHelperService();
                 resultSetHelperService.setDateFormat("yyyy-MM-dd");
 
                 //Incorporamos el servicio de result set a nuestro CSVWriter
                 file.setResultService(resultSetHelperService);
+
                 //importamos el resultSet
                 file.writeAll(resultSet, true, false, false);
                 file.close();

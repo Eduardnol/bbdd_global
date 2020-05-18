@@ -159,9 +159,9 @@ public class Connect {
 
 
     public void importar(String tabla, String path, Connection database) {
-
-        String query = ("LOAD  DATA LOCAL INFILE '" + path + "' INTO TABLE " + tabla + " CHARACTER SET 'utf8'" + " FIELDS TERMINATED BY ',' ENCLOSED BY'\\\"'" +
-                "LINES TERMINATED BY '\n' IGNORE 1 LINES;");
+                                                                                                                                //ENCLOSED BY'\\\"'"
+        String query = ("LOAD  DATA LOCAL INFILE '" + path + "' INTO TABLE " + tabla + " CHARACTER SET 'utf8'" + " FIELDS TERMINATED BY ',' ESCAPED BY '' " +
+                "LINES TERMINATED BY '\\n' IGNORE 1 LINES;");
 
         try {
             s = (Statement) database.createStatement();

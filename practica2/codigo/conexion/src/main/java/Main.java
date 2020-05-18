@@ -20,6 +20,10 @@ public class Main {
 
         retrieve.retrieveInfo();
 
+
+
+
+
         long endTime = System.nanoTime();
 
         long durationInNano = (endTime - startTime);  //Total execution time in nano seconds
@@ -28,6 +32,8 @@ public class Main {
 
         long durationInMillis = TimeUnit.NANOSECONDS.toMillis(durationInNano);  //Total execution time in nano seconds
         long durationInSeconds = TimeUnit.NANOSECONDS.toSeconds(durationInNano);
+
+
 
         //System.out.println(durationInNano);
         System.out.println("Import database completed in: " + durationInMillis + "ms");
