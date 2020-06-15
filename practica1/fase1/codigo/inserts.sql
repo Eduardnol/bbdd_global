@@ -23,8 +23,6 @@ COPY Host_Import
 COPY Review_Import
     FROM 'D:\OneDrive\Estudios\uni\Curso_2\bbdd\practica1\fase1\Fitxers P1-20191029\Review.csv' DELIMITER ',' QUOTE '"' CSV HEADER;
 
---#&&
---SELECT regexp_split_to_table(apartment.amenities, '}') FROM apartment;
 
 --#&&
 INSERT INTO Country (id_country, nom)
@@ -72,15 +70,15 @@ GROUP BY hi.host_url, hi.host_name, hi.host_since, hi.host_about;
 
 
 --#&&
-INSERT INTO apartment (listing_url, name, description, id_neighbourhood ,id_host, street, amenities)
-SELECT ai.listing_url, ai.name, ai.description, n.id_neighbourhood, h.host_url, ai.street, ai.amenities
+INSERT INTO apartment (listing_url, name, description, id_neighbourhood, id_host, street)
+SELECT ai.listing_url, ai.name, ai.description, n.id_neighbourhood, h.host_url, ai.street
 FROM apartment_import AS ai,
      host_import AS h,
      neighbourhood AS n,
      city AS c,
      state AS s
-WHERE ai.listing_url = h.listing_url AND
-      ai.neighbourhood = n.nom
+WHERE ai.listing_url = h.listing_url
+  AND ai.neighbourhood = n.nom
   AND ai.city = c.nom
   AND c.id_city = n.id_city
   AND (ai.state = s.nom OR (s.nom is null AND ai.state is null))
@@ -137,13 +135,12 @@ WHERE ri.listing_url = a.listing_url
 
 --#&&
 INSERT INTO Host_Info(id_host, host_picture_url, host_response_rate, host_is_superhost, host_listings_count,
-                      host_verifications, host_identity_verified)
+                      host_identity_verified)
 SELECT h.host_url,
        h.host_picture_url,
        h.host_response_rate,
        h.host_is_superhost,
        h.host_listings_count,
-       h.host_verifications,
        h.host_identity_verified
 FROM host_import as h
 GROUP BY (host_url, host_picture_url, host_response_rate, host_is_superhost, host_listings_count, host_verifications,
@@ -153,6 +150,61 @@ UPDATE host_info
 set host_response_rate = replace(host_response_rate, RIGHT(host_response_rate, 1), '');
 UPDATE host_info
 set host_response_rate = replace(host_response_rate, 'N/', '0');
+
+
+--#&&
+UPDATE apartment_import
+SET amenities = replace(amenities, '"', '');
+
+UPDATE apartment_import
+SET amenities = replace(amenities, '{', '');
+
+UPDATE apartment_import
+SET amenities = replace(amenities, '}', '');
+
+UPDATE apartment_import
+SET amenities = replace(amenities, ' ', '');
+
+
+--#&&
+INSERT INTO amenities(name)
+SELECT DISTINCT regexp_split_to_table(a.amenities, ',')
+FROM apartment_import AS a;
+
+--#&&
+INSERT INTO amenitiesapartment(id_amenities, id_apartments)
+SELECT am.id, a.listing_url
+FROM apartment_import AS a,
+     amenities AS am
+WHERE a.amenities LIKE '%' || am.name || '%';
+
+
+--#&&
+UPDATE host_import
+SET host_verifications = replace(host_verifications, '''', '');
+
+UPDATE host_import
+SET host_verifications = replace(host_verifications, '[', '');
+
+UPDATE host_import
+SET host_verifications = replace(host_verifications, ']', '');
+
+UPDATE host_import
+SET host_verifications = replace(host_verifications, ' ', '');
+
+
+--#&&
+INSERT INTO verifications (verification_name)
+SELECT DISTINCT regexp_split_to_table(h.host_verifications, ',')
+FROM host_import AS h;
+
+--#&&
+INSERT INTO host_verifications(id_verification, id_host)
+SELECT v.id_verification, h.host_url
+FROM verifications AS v,
+     host_import AS h
+WHERE h.host_verifications LIKE '%' || v.verification_name || '%'
+GROUP BY  v.id_verification, h.host_url;
 
 
 UPDATE money
@@ -169,10 +221,9 @@ UPDATE money
 set weekly_price = replace(weekly_price, ',', '');
 
 
-SELECT *
-FROM host_info
-where host_response_rate like 'N/A';
-
+-- SELECT *
+-- FROM host_info
+-- where host_response_rate like 'N/A';
 
 
 UPDATE info

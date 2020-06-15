@@ -1,25 +1,7 @@
-DROP TABLE IF EXISTS Money CASCADE;
-DROP TABLE IF EXISTS Info CASCADE;
-DROP TABLE IF EXISTS Amenities CASCADE;
-DROP TABLE IF EXISTS PropertyType CASCADE;
-DROP TABLE IF EXISTS Properties CASCADE;
-DROP TABLE IF EXISTS Apartment CASCADE;
-DROP TABLE IF EXISTS Country CASCADE;
-DROP TABLE IF EXISTS State CASCADE;
-DROP TABLE IF EXISTS City CASCADE;
-DROP TABLE IF EXISTS Neighbourhood CASCADE;
-DROP TABLE IF EXISTS Street CASCADE;
-DROP TABLE IF EXISTS Localitzada CASCADE;
-DROP TABLE IF EXISTS Reviewer CASCADE;
-DROP TABLE IF EXISTS Reviews CASCADE;
-DROP TABLE IF EXISTS Host_T CASCADE;
-DROP TABLE IF EXISTS Host_Info CASCADE;
-DROP TABLE IF EXISTS Host CASCADE;
-DROP TABLE IF EXISTS Review CASCADE;
-
 DROP TABLE IF EXISTS Apartment_Import CASCADE;
 DROP TABLE IF EXISTS Host_Import CASCADE;
 DROP TABLE IF EXISTS Review_Import CASCADE;
+
 
 CREATE TABLE Apartment_Import
 (
@@ -92,6 +74,33 @@ CREATE TABLE Review_Import
 );
 
 
+DROP TABLE IF EXISTS Money CASCADE;
+DROP TABLE IF EXISTS Info CASCADE;
+DROP TABLE IF EXISTS Amenities CASCADE;
+DROP TABLE IF EXISTS PropertyType CASCADE;
+DROP TABLE IF EXISTS Properties CASCADE;
+DROP TABLE IF EXISTS Apartment CASCADE;
+DROP TABLE IF EXISTS Country CASCADE;
+DROP TABLE IF EXISTS State CASCADE;
+DROP TABLE IF EXISTS City CASCADE;
+DROP TABLE IF EXISTS Neighbourhood CASCADE;
+DROP TABLE IF EXISTS Street CASCADE;
+DROP TABLE IF EXISTS Localitzada CASCADE;
+DROP TABLE IF EXISTS Reviewer CASCADE;
+DROP TABLE IF EXISTS Reviews CASCADE;
+DROP TABLE IF EXISTS Host_T CASCADE;
+DROP TABLE IF EXISTS Host_Info CASCADE;
+DROP TABLE IF EXISTS Host CASCADE;
+DROP TABLE IF EXISTS Review CASCADE;
+DROP TABLE IF EXISTS Amenities CASCADE;
+DROP TABLE IF EXISTS AmenitiesApartment CASCADE;
+DROP TABLE IF EXISTS verifications CASCADE;
+DROP TABLE IF EXISTS host_verifications CASCADE;
+
+
+
+
+
 CREATE TABLE Country
 (
     id_country varchar,
@@ -142,7 +151,6 @@ CREATE TABLE Apartment
     id_neighbourhood int,
     id_host          varchar(255),
     street           varchar(255),
-    amenities        text,
     PRIMARY KEY (listing_url),
     FOREIGN KEY (id_host) REFERENCES Host (host_url),
     FOREIGN KEY (id_neighbourhood) REFERENCES Neighbourhood (id_neighbourhood)
@@ -210,15 +218,15 @@ CREATE TABLE Properties
     FOREIGN KEY (id_type) REFERENCES PropertyType (id_type)
 );
 
-CREATE TABLE Amenities
-(
-    id_amenities  SERIAL,
-    nombre        varchar,
-    id_properties int,
-    PRIMARY KEY (id_amenities),
-    FOREIGN KEY (id_properties) REFERENCES Properties (id_properties)
-
-);
+-- CREATE TABLE Amenities
+-- (
+--     id_amenities  SERIAL,
+--     nombre        varchar,
+--     id_properties int,
+--     PRIMARY KEY (id_amenities),
+--     FOREIGN KEY (id_properties) REFERENCES Properties (id_properties)
+--
+-- );
 
 CREATE TABLE Reviews
 (
@@ -238,10 +246,41 @@ CREATE TABLE Host_Info
     host_response_rate     varchar(4),
     host_is_superhost      boolean,
     host_listings_count    int,
-    host_verifications     varchar,
     host_identity_verified boolean,
     PRIMARY KEY (id_host_info),
     FOREIGN KEY (id_host) REFERENCES Host (host_url)
 
 );
+CREATE TABLE Amenities
+(
+    id   SERIAL,
+    name varchar(255),
+    PRIMARY KEY (id)
+);
 
+CREATE TABLE AmenitiesApartment
+(
+    id_amenities  int,
+    id_apartments varchar(255),
+    PRIMARY KEY (id_amenities, id_apartments),
+    FOREIGN KEY (id_apartments) REFERENCES apartment(listing_url),
+    FOREIGN KEY (id_amenities) REFERENCES amenities(id)
+);
+
+
+CREATE TABLE verifications
+(
+    id_verification   SERIAL,
+    verification_name varchar(255),
+    PRIMARY KEY (id_verification)
+);
+
+
+CREATE TABLE host_verifications
+(
+    id_verification int,
+    id_host         varchar(255),
+    PRIMARY KEY (id_verification, id_host),
+    FOREIGN KEY (id_verification) references verifications (id_verification),
+    FOREIGN KEY (id_host) references host (host_url)
+);
