@@ -1,0 +1,16 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+      \PYG{n}{USE} \PYG{n}{f1}\PYG{p}{;}
+
+
+    \PYG{k}{DROP} \PYG{k}{USER} \PYG{k}{IF} \PYG{k}{EXISTS} \PYG{n}{analytic\PYGZus{}userm}\PYG{p}{;}
+    \PYG{k}{DROP} \PYG{k}{USER} \PYG{k}{IF} \PYG{k}{EXISTS} \PYG{n}{manage\PYGZus{}user}\PYG{p}{;}
+    \PYG{k}{DROP} \PYG{k}{USER} \PYG{k}{IF} \PYG{k}{EXISTS} \PYG{n}{rrhh\PYGZus{}user}\PYG{p}{;}
+
+    \PYG{k}{CREATE} \PYG{k}{USER} \PYG{l+s+s1}{\PYGZsq{}analytic\PYGZus{}user\PYGZsq{}}\PYG{o}{@}\PYG{l+s+s1}{\PYGZsq{}localhost\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}manager\PYGZus{}user\PYGZsq{}}\PYG{o}{@}\PYG{l+s+s1}{\PYGZsq{}localhost\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}rrhh\PYGZus{}user\PYGZsq{}}\PYG{o}{@}\PYG{l+s+s1}{\PYGZsq{}localhost\PYGZsq{}}\PYG{p}{;}
+
+    \PYG{k}{GRANT} \PYG{k}{SELECT}\PYG{p}{,} \PYG{k}{CREATE} \PYG{k}{VIEW}\PYG{p}{,} \PYG{k}{SHOW} \PYG{k}{VIEW} \PYG{k}{ON} \PYG{n}{f1\PYGZus{}olap}\PYG{p}{.}\PYG{o}{*} \PYG{k}{to} \PYG{l+s+s1}{\PYGZsq{}analytic\PYGZus{}user\PYGZsq{}}\PYG{o}{@}\PYG{l+s+s1}{\PYGZsq{}localhost\PYGZsq{}}\PYG{p}{;}
+
+    \PYG{k}{GRANT} \PYG{k}{SELECT}\PYG{p}{,} \PYG{k}{INSERT}\PYG{p}{,} \PYG{k}{UPDATE}\PYG{p}{,} \PYG{k}{USAGE}\PYG{p}{,} \PYG{k}{DELETE} \PYG{k}{ON} \PYG{n}{f1}\PYG{p}{.}\PYG{o}{*} \PYG{k}{to} \PYG{l+s+s1}{\PYGZsq{}manager\PYGZus{}user\PYGZsq{}}\PYG{o}{@}\PYG{l+s+s1}{\PYGZsq{}localhost\PYGZsq{}}\PYG{p}{;}
+
+    \PYG{k}{GRANT} \PYG{k}{CREATE} \PYG{k}{USER} \PYG{k}{ON} \PYG{o}{*}\PYG{p}{.}\PYG{o}{*} \PYG{k}{TO} \PYG{l+s+s1}{\PYGZsq{}rrhh\PYGZus{}user\PYGZsq{}}\PYG{o}{@}\PYG{l+s+s1}{\PYGZsq{}localhost\PYGZsq{}}\PYG{p}{;}
+\end{Verbatim}

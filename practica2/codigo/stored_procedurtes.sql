@@ -130,7 +130,7 @@ create trigger insert_race
     for each row
 begin
 
-    IF EXISTS(SELECT * FROM f1_olap.circuits c WHERE c.raceId = 0) THEN
+    IF EXISTS(SELECT * FROM f1_olap.circuits c WHERE c.circuitId = NEW.circuitId) THEN
 
         update f1_olap.circuits
         SET raceID    = NEW.raceId,
@@ -141,8 +141,7 @@ begin
             time      = NEW.time,
             url_race  = NEW.url
 
-        WHERE f1_olap.circuits.circuitId = NEW.circuitId
-          AND f1_olap.circuits.year = NEW.year;
+        WHERE f1_olap.circuits.circuitId = NEW.circuitId;
 
 
     ELSE

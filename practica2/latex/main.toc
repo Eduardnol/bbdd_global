@@ -1,29 +1,114 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
 \babel@toc {spanish}{}
+\defcounter {refsection}{0}\relax 
 \thispagestyle {empty}
+\defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {1}Introduction With a Brief Summary}{3}{section.1}% 
+\defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{3}{section*.2}% 
+\defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{3}{section*.3}% 
-\contentsline {section}{\numberline {2}OLAP and OLTP concepts explained}{3}{section.2}% 
+\defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{3}{section*.4}% 
-\contentsline {section}{\numberline {3}Explain How You Find Out The Remote OLTP Database Structure}{3}{section.3}% 
+\defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{3}{section*.5}% 
-\contentsline {paragraph}{}{3}{section*.6}% 
-\contentsline {paragraph}{}{3}{section*.7}% 
-\contentsline {paragraph}{}{4}{section*.8}% 
-\contentsline {paragraph}{}{4}{section*.9}% 
-\contentsline {section}{\numberline {4}Relational OLAP Model Diagram}{4}{section.4}% 
-\contentsline {section}{\numberline {5}Explain How Your Java Program Works}{4}{section.5}% 
-\contentsline {paragraph}{}{4}{section*.10}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2}OLAP and OLTP concepts explained}{4}{section.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{4}{section*.6}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{4}{section*.7}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1}OLAP}{4}{subsection.2.1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.1.1}Ventajas de OLAP}{4}{subsubsection.2.1.1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.1.2}Desventajas de OLAP}{4}{subsubsection.2.1.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.1.3}Tipos de OLAP}{4}{subsubsection.2.1.3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.1.4}ROLAP Advantages}{4}{subsubsection.2.1.4}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{5}{section*.8}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.1.5}ROLAP Drawbacks}{5}{subsubsection.2.1.5}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.2}OLTP}{5}{subsection.2.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{5}{section*.9}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{5}{section*.10}% 
+\defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{5}{section*.11}% 
+\defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{5}{section*.12}% 
-\contentsline {section}{\numberline {6}Explain Hoy You Created The Users}{5}{section.6}% 
-\contentsline {section}{\numberline {7}Explain How Your Stored Procedures Work}{5}{section.7}% 
-\contentsline {section}{\numberline {8}Explain How Your Events And Triggers Works}{5}{section.8}% 
-\contentsline {subsection}{\numberline {8.1}Triggers}{5}{subsection.8.1}% 
+\defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{5}{section*.13}% 
-\contentsline {paragraph}{}{5}{section*.14}% 
-\contentsline {subsection}{\numberline {8.2}Events}{6}{subsection.8.2}% 
-\contentsline {section}{\numberline {9}Report about OLTP vs OLAP Comparison}{6}{section.9}% 
-\contentsline {section}{\numberline {10}Time Dedicated Per Part}{6}{section.10}% 
-\contentsline {section}{\numberline {11}Conclusions}{6}{section.11}% 
-\contentsline {section}{Bibliograf\IeC {\'\i }a}{6}{section.11}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.3}Ventajas OLTP}{5}{subsection.2.3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.4}Desventajas OLTP}{5}{subsection.2.4}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.5}Diferences between them}{6}{subsection.2.5}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3}Explain How You Find Out The Remote OLTP Database Structure}{7}{section.3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{7}{section*.15}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{7}{section*.16}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{7}{section*.17}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{7}{section*.19}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{7}{section*.20}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4}Relational OLAP Model Diagram}{8}{section.4}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5}Explain How Your Java Program Works}{10}{section.5}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{10}{section*.22}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{10}{section*.23}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{10}{section*.24}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{10}{section*.25}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {6}Explain How You Created The Users}{11}{section.6}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{11}{section*.27}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{11}{section*.28}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{11}{section*.29}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {7}Explain How Your Stored Procedures Work}{12}{section.7}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {8}Explain How Your Events And Triggers Works}{13}{section.8}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {8.1}Triggers}{13}{subsection.8.1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{13}{section*.30}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{13}{section*.31}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {8.2}Events}{13}{subsection.8.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {9}Report about OLTP vs OLAP Comparison}{14}{section.9}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{14}{section*.33}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{14}{section*.34}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{14}{section*.35}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{14}{section*.36}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {10}Time Dedicated Per Part}{15}{section.10}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {11}Conclusiones}{16}{section.11}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{16}{section*.37}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{Bibliograf\IeC {\'\i }a}{17}{section*.37}% 

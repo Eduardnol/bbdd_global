@@ -24,7 +24,7 @@
             \PYG{k}{NEW}\PYG{p}{.}\PYG{k}{location}\PYG{p}{,}
             \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{country}\PYG{p}{,}
             \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{lat}\PYG{p}{,}
-            \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{lng}\PYG{p}{,}
+                \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{lng}\PYG{p}{,}
             \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{alt}\PYG{p}{,}
             \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{url}\PYG{p}{;}
 

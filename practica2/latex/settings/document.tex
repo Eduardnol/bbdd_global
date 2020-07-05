@@ -10,11 +10,22 @@
 \usepackage{imakeidx}
 \usepackage{svg}
 \usepackage{amsmath}
+\usepackage{subcaption}
+
+
+\usepackage{afterpage}
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+
 \raggedbottom 
 \usepackage[
   pdftex,
   pdfauthor={Eduardo Nolla},
-  pdftitle={BBDD LSMotor},
+  pdftitle={BBDD},
   pdfsubject={BBDD},
   pdfproducer={LaTeX},
   pdfcreator={pdfLaTeX},
@@ -36,11 +47,11 @@
 \usepackage[T1]{fontenc} % Output font encoding for international characters
 %\usepackage{fouriernc} % Use the New Century Schoolbook font
 \usepackage{graphicx}
-\graphicspath{ {D:\OneDrive\Estudios\uni\Curso_2\paed\practicas\proyecto2\latex\imagenes} }
+\graphicspath{ {./imagenes/} }
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[EL,RO]{Eduardo Nolla}
-\fancyhead[ER,LO]{Bases De Datos}
+\fancyhead[ER,LO]{Bases de Datos}
 \fancyfoot[ER,LO]{\leftmark}
 \fancyfoot[EL,RO]{\thepage}
  
@@ -50,7 +61,7 @@
 
 
 
-\title{PAED Práctica 3 - CSGO}
+\title{BBDD - Práctica II}
 \author{Eduardo Nolla}
 \date{July 2020}
 \usepackage{bookmark}
