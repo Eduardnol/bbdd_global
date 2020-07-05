@@ -1,5 +1,6 @@
 use f1;
 
+#--------------------- Queries ---------------------
 SELECT s.status
 FROM status s
          LEFT JOIN results r on s.statusId = r.statusId
@@ -7,22 +8,8 @@ WHERE r.statusId IS NULL
 GROUP BY s.statusId;
 
 
-# Jaguar || Australian 22.49
-SELECT d.nationality, AVG(p.duration) average
-FROM pitstops p
-         JOIN drivers d on p.driverId = d.driverId
-         JOIN qualifying q on d.driverId = q.driverId
-         JOIN constructors c on q.constructorId = c.constructorId
-GROUP BY c.constructorId
-HAVING average < ALL (SELECT AVG(p2.duration)
-                      FROM pitstops p2
-                               JOIN drivers d2 on p2.driverId = d2.driverId
-                               JOIN qualifying q2 on d2.driverId = q2.driverId
-                               JOIN constructors c2 on q2.constructorId = c2.constructorId
-                      WHERE c2.constructorId <> c.constructorId
-                      GROUP BY c2.constructorId);
 
-#
+#Belgian 21.962
 SELECT d.nationality, AVG(p.duration) average
 FROM drivers d
          JOIN laptimes p on d.driverId = p.driverId
@@ -36,7 +23,7 @@ HAVING average < ALL (SELECT AVG(p2.duration)
                       GROUP BY d2.driverId, r2.constructorId);
 
 
-
+#Lewis Hamilton, Valtteri Bottas
 SELECT d.forename, d.surname
 FROM drivers d
          JOIN results r on d.driverId = r.driverId
@@ -56,7 +43,7 @@ WHERE r.q1 > r.q2 > r.q3
 
   AND (r.position = 1 OR r.position = 2 OR r.position = 3);
 
-
+#16 rows Romain Grosjean, Sergio Pérez, Daniel Ricciardo, Max Chilton...
 SELECT d.forename, d.surname, r.fastestLapSpeed, l.time, c.name
 FROM drivers d
          JOIN results r on d.driverId = r.driverId
@@ -84,6 +71,7 @@ WHERE r.fastestLapTime
                                  WHERE r2.raceId = r.raceId
                                    AND r2.driverId <> r.driverId));
 
+#Oswald Karch, 34 positions
 SELECT d.forename, d.surname, c.name, c.year, (r.grid - r.position) overtaking
 FROM drivers d
          JOIN results r on d.driverId = r.driverId
@@ -91,9 +79,9 @@ FROM drivers d
 WHERE (r.grid - r.position) > ALL
       (SELECT r2.grid - r2.position
        FROM f1_olap.results AS r2
-       WHERE r.driverId <> r2.driverId)
+       WHERE r.driverId <> r2.driverId);
 
-
+#--------------------- OLAP Vs OLTP ---------------------
 #Simple query involving one row
 SELECT d.forename, d.surname
 FROM f1.drivers d
@@ -103,57 +91,60 @@ SELECT d.forename, d.surname
 FROM f1_olap.drivers d
 WHERE d.nationality = 'Spanish';
 
-# A complex query which involves at least 5 tables.
+# A complex query which involves at least 5 tables. Show the name of the spanish pilot participated in spanish GP ON 2008
+SELECT d.forename forename, r.grid grid, r.position position, ra.url urlRace, c.name
+FROM f1.drivers d
+         JOIN f1.results r ON r.driverId = d.driverId
+         JOIN f1.races ra ON ra.raceId = r.raceId
+         JOIN f1.circuits c ON c.circuitId = ra.circuitId
+         JOIN f1.seasons s ON ra.year = s.year
+WHERE d.nationality = 'Spanish'
+  AND c.country = 'Spain'
+  AND s.year = 2008;
+
+SELECT d.forename, r.grid, r.position, c.url, c.name
+FROM f1_olap.drivers d
+         JOIN f1_olap.results r on d.driverId = r.driverId
+         JOIN f1_olap.circuits c on r.raceId = c.raceId
+WHERE d.nationality = 'Spanish'
+  AND c.country = 'Spain'
+  AND c.year = 2008;
 
 
 # An insert into 1 table.
+INSERT INTO f1.laptimes(raceId, driverId, lap, position, time, milliseconds)
+VALUES (19, 1, 155, 9, '1:52.039', 112039);
+
+INSERT INTO f1_olap.laptimes(raceId, driverId, lap, position, time, milliseconds)
+VALUES (19, 1, 155, 9, '1:52.039', 112039);
 
 # An update into 1 field.
+UPDATE f1.laptimes
+SET milliseconds = 1
+WHERE milliseconds = 112039
+  AND raceId = 19
+  AND driverId = 1
+  AND lap = 155;
+
+UPDATE f1_olap.laptimes
+SET milliseconds = 1
+WHERE milliseconds = 112039
+  AND raceId = 19
+  AND driverId = 1
+  AND lap = 155;
+
+
 # A delete into 1 table
+DELETE
+FROM f1.laptimes
+WHERE milliseconds = 1
+  AND raceId = 19
+  AND driverId = 1
+  AND lap = 155;
 
-
-DELIMITER $$
-DROP TRIGGER IF EXISTS f1.update_database_users;
-CREATE TRIGGER f1.update_database
-
-    AFTER UPDATE
-    ON f1.drivers
-    FOR EACH ROW
-BEGIN
-    insert into f1_olap.drivers
-    SELECT d.driverId,
-           d.driverRef,
-           d.number,
-           d.code,
-           d.forename,
-           d.surname,
-           d.dob,
-           d.nationality,
-           d.url
-    FROM f1.drivers d;
-END;
-&&
-DELIMITER ;
-
-
-DELIMITER $$
-DROP TRIGGER IF EXISTS f1.update_database_constructors;
-CREATE TRIGGER f1.update_database_constructors
-
-    AFTER UPDATE
-    ON f1.constructors
-    FOR EACH ROW
-BEGIN
-    insert into f1_olap.constructors
-    SELECT c.constructorId,
-           c.constructorRef,
-           c.name,
-           c.nationality,
-           c.url
-    FROM f1.constructors AS c;
-END;
-&&
-DELIMITER ;
-
-
-
+DELETE
+FROM f1_olap.laptimes
+WHERE milliseconds = 1
+  AND raceId = 19
+  AND driverId = 1
+  AND lap = 155;

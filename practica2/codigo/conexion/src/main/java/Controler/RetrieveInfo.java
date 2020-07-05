@@ -36,14 +36,14 @@ public class RetrieveInfo {
 //                "", "", "", "", "", "", "", "", ""};
 
         String[] local = {"drivers", "constructors", "races", "circuits",
-                "seasons", "lapTimes", "pitStops"};// ,"constructorResults", "constructorStandings", "driverStandings", "qualifying", "results", "status"};
+                "seasons", "lapTimes", "pitStops" ,"constructorResults", "constructorStandings", "driverStandings", "qualifying", "results", "status"};
 
         connect.connectDatabases();
 
 
         try {
-            for (int i = 0; i < local.length; i++) {
-                String query = "SELECT * FROM " + local[i];
+            for (String s : local) {
+                String query = "SELECT * FROM " + s;
                 ResultSet resultSet = connect.selectQuery(query, connect.getRemote());
                 CSVWriter file = new CSVWriter(new FileWriter("src/main/resources/info.csv"));
 
@@ -59,7 +59,7 @@ public class RetrieveInfo {
                 file.close();
                 //Escribimos el csv resultante
                 path = new File("src/main/resources/info.csv").getAbsolutePath();
-                insertInfo(local[i]);
+                insertInfo(s);
             }
 
 

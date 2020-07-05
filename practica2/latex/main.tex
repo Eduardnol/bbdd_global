@@ -1,0 +1,160 @@
+\documentclass[%a4paper 
+%,11pt 
+,twoside
+]{article}
+
+\input{settings/document.tex}
+\input{settings/listings.tex}
+%\input{settings/bibliography.tex}
+\input{settings/colors.tex}
+
+%\renewcommand*\contentsname{Índice}
+\usepackage{pdfpages}
+\usepackage{minted}
+
+\graphicspath{ {images/} }
+
+
+\definecolor{LightGray}{gray}{0.9}
+\definecolor{DarkGray}{RGB}{37, 37, 37}
+
+%\pagecolor{DarkGray}
+
+\usemintedstyle{monokai}
+
+%New colors defined below
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+
+
+\begin{document}
+\input{resources/title_page.tex}
+
+\newpage\thispagestyle{empty}
+{
+  \pagestyle{empty}
+  \addtocontents{toc}{\protect\thispagestyle{empty}} 
+  \tableofcontents
+  \clearpage
+}
+
+\section{Introduction With a Brief Summary}
+  \paragraph{}
+  Se debe realizar una importación de la base de datos alojada en Puigpedros hacia una base de datos local de tipo OLTP.
+  \paragraph{}
+  Dentro de la tabla OLTP dispondremos de unos triggers que se dedicarán a ir exportando todas las tablas hacia las nuevas tablas mejor optimizadas a nivel de rendimiento llamadas OLAP
+
+\section{OLAP and OLTP concepts explained}
+  \paragraph{}
+  OLTP es un tipo de Base de Datos normalizado según las normas formales. Se centra en la optimización del almacenamiento de las tablas. Mientras que el modelo OLAP se centra más en juntar tablas previsiblemente debamos tener juntas en las futuras queries. Por ejemplo, la tabla de nombres de usuario y la tabla de correos electrónicos es muy probable que en las consultas se tenga que realizar un JOIN entre ellas, teniendo un coste alto. Precisamente en OLAP, al tener esas tablas ya juntas, ahorramos en tiempos de ejecución.
+
+\section{Explain How You Find Out The Remote OLTP Database Structure}
+\paragraph{}
+Para encontrar la estructura de la base de datos remota, se ha conectado al servidor de Puigpedros y desde ahí a la base de datos. 
+
+\paragraph{}
+Desde la línea de comandos se ha usado el comando Show Databases para ver las bases de datos a las que tenemos acceso.
+
+\paragraph{}
+Ejecutamos el use F1; para usar la base de datos F1 y recibimos el resultado de: Figura \ref{tablas}
+
+\begin{figure}[H]
+  \centering
+  \label{tablas}
+  \includegraphics[width=8cm]{tables.png}  
+  \caption{Todas las Tablas de la Base de Datos}
+
+\end{figure}
+
+
+\paragraph{}
+Ejecutamos Show tables; para ver todas las tablas que hay en F1
+
+\paragraph{}
+Luego vamos ejecutando de manera individual los describe en la Figura \ref{table_columns}
+
+\begin{figure}[H]
+  \centering
+  \label{table_columns}
+  \includegraphics[width=8cm]{table_columns.png}
+  \caption{Columnas en la tabla circuits}
+\end{figure}
+
+
+\section{Relational OLAP Model Diagram}
+\section{Explain How Your Java Program Works}
+\paragraph{}
+Este programa usa dos librerías:\\
+-	OpenCSV\\
+Ambas se descargan de manera automática desde Maven 
+\paragraph{}
+En primer lugar, nos conectamos a la base de datos remota, con ayuda de la librería JDBC de MySQL. Luego realizaremos un bucle que nos haga un select de las distintas tablas. El resultado lo introduciremos dentro de un ResultSet. Este result set lo exportaremos como CSV gracias a nuestra segunda librería OpenCSV. Por último, importaremos el CSV desde la base de datos OLTP local. Después vamos a repetir el proceso con la siguiente tabla.
+\paragraph{}
+Este método se ha usado ya que es mucho menos costo de implementar, ya que no pasa por las clases de Java. Así que nos ahorramos la extracción del ResulSet a su Clase.
+
+\section{Explain Hoy You Created The Users}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=8cm]{privilege.png}
+  \caption{Tipos de privilegios}
+\end{figure}
+\section{Explain How Your Stored Procedures Work}
+\section{Explain How Your Events And Triggers Works}
+\subsection{Triggers}
+\paragraph{}
+Después de una inserción dentro de alguno de los campos de la base de datos OLTP se va a actualizar los campos correspondientes dentro de la tabla OLAP, el problema viene cuando en la OLAP hemos juntado distintas tablas en una sola.
+\paragraph{}
+La solución ha sido buscar si el campo que se ha insertado en la OLTP ya existe en la OLAP. Si ya existe lo que vamos a hacer es una actualización mientras que si no existe, vamos a realizar una inserción.
+
+\begin{listing}[H]
+  \begin{minted}[bgcolor = DarkGray, breaklines = true, fontsize=\footnotesize]{SQL}
+      IF EXISTS(SELECT * FROM f1_olap.circuits c WHERE c.circuitId = NEW.circuitId) THEN
+
+      update f1_olap.circuits
+      SET circuitId  = NEW.circuitId,
+          circuitRef = NEW.circuitRef,
+          name       = NEW.name,
+          location   = NEW.location,
+          country    = NEW.country,
+          lat        = NEW.lat,
+          lng        = NEW.lng,
+          alt        = NEW.alt,
+          url        = NEW.url
+      WHERE circuitId = NEW.circuitId;
+
+
+
+    ELSE
+
+      insert into f1_olap.circuits (circuitId, circuitRef, name, location, country, lat, lng, alt, url)
+      select NEW.circuitId,
+            NEW.circuitRef,
+            NEW.name,
+            NEW.location,
+            NEW.country,
+            NEW.lat,
+            NEW.lng,
+            NEW.alt,
+            NEW.url;
+
+    END IF;
+
+  \end{minted}
+  \caption{Insertion}
+  \label{lst:insert}
+\end{listing}
+
+\subsection{Events}
+
+\section{Report about OLTP vs OLAP Comparison}
+\section{Time Dedicated Per Part}
+\section{Conclusions}
+
+
+  
+  \addcontentsline{toc}{section}{Bibliografía}
+  \nocite{*}
+  %\printbibliography[title={Bibliografía}]
+
+\end{document}

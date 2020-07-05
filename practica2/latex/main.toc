@@ -1,0 +1,29 @@
+\babel@toc {spanish}{}
+\thispagestyle {empty}
+\contentsline {section}{\numberline {1}Introduction With a Brief Summary}{3}{section.1}% 
+\contentsline {paragraph}{}{3}{section*.2}% 
+\contentsline {paragraph}{}{3}{section*.3}% 
+\contentsline {section}{\numberline {2}OLAP and OLTP concepts explained}{3}{section.2}% 
+\contentsline {paragraph}{}{3}{section*.4}% 
+\contentsline {section}{\numberline {3}Explain How You Find Out The Remote OLTP Database Structure}{3}{section.3}% 
+\contentsline {paragraph}{}{3}{section*.5}% 
+\contentsline {paragraph}{}{3}{section*.6}% 
+\contentsline {paragraph}{}{3}{section*.7}% 
+\contentsline {paragraph}{}{4}{section*.8}% 
+\contentsline {paragraph}{}{4}{section*.9}% 
+\contentsline {section}{\numberline {4}Relational OLAP Model Diagram}{4}{section.4}% 
+\contentsline {section}{\numberline {5}Explain How Your Java Program Works}{4}{section.5}% 
+\contentsline {paragraph}{}{4}{section*.10}% 
+\contentsline {paragraph}{}{5}{section*.11}% 
+\contentsline {paragraph}{}{5}{section*.12}% 
+\contentsline {section}{\numberline {6}Explain Hoy You Created The Users}{5}{section.6}% 
+\contentsline {section}{\numberline {7}Explain How Your Stored Procedures Work}{5}{section.7}% 
+\contentsline {section}{\numberline {8}Explain How Your Events And Triggers Works}{5}{section.8}% 
+\contentsline {subsection}{\numberline {8.1}Triggers}{5}{subsection.8.1}% 
+\contentsline {paragraph}{}{5}{section*.13}% 
+\contentsline {paragraph}{}{5}{section*.14}% 
+\contentsline {subsection}{\numberline {8.2}Events}{6}{subsection.8.2}% 
+\contentsline {section}{\numberline {9}Report about OLTP vs OLAP Comparison}{6}{section.9}% 
+\contentsline {section}{\numberline {10}Time Dedicated Per Part}{6}{section.10}% 
+\contentsline {section}{\numberline {11}Conclusions}{6}{section.11}% 
+\contentsline {section}{Bibliograf\IeC {\'\i }a}{6}{section.11}% 

@@ -1,0 +1,32 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+      \PYG{k}{IF} \PYG{k}{EXISTS}\PYG{p}{(}\PYG{k}{SELECT} \PYG{o}{*} \PYG{k}{FROM} \PYG{n}{f1\PYGZus{}olap}\PYG{p}{.}\PYG{n}{circuits} \PYG{k}{c} \PYG{k}{WHERE} \PYG{k}{c}\PYG{p}{.}\PYG{n}{circuitId} \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{circuitId}\PYG{p}{)} \PYG{k}{THEN}
+
+      \PYG{k}{update} \PYG{n}{f1\PYGZus{}olap}\PYG{p}{.}\PYG{n}{circuits}
+      \PYG{k}{SET} \PYG{n}{circuitId}  \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{circuitId}\PYG{p}{,}
+          \PYG{n}{circuitRef} \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{circuitRef}\PYG{p}{,}
+          \PYG{n}{name}       \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{name}\PYG{p}{,}
+          \PYG{k}{location}   \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{k}{location}\PYG{p}{,}
+          \PYG{n}{country}    \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{country}\PYG{p}{,}
+          \PYG{n}{lat}        \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{lat}\PYG{p}{,}
+          \PYG{n}{lng}        \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{lng}\PYG{p}{,}
+          \PYG{n}{alt}        \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{alt}\PYG{p}{,}
+          \PYG{n}{url}        \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{url}
+      \PYG{k}{WHERE} \PYG{n}{circuitId} \PYG{o}{=} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{circuitId}\PYG{p}{;}
+
+
+
+    \PYG{k}{ELSE}
+
+      \PYG{k}{insert} \PYG{k}{into} \PYG{n}{f1\PYGZus{}olap}\PYG{p}{.}\PYG{n}{circuits} \PYG{p}{(}\PYG{n}{circuitId}\PYG{p}{,} \PYG{n}{circuitRef}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{k}{location}\PYG{p}{,} \PYG{n}{country}\PYG{p}{,} \PYG{n}{lat}\PYG{p}{,} \PYG{n}{lng}\PYG{p}{,} \PYG{n}{alt}\PYG{p}{,} \PYG{n}{url}\PYG{p}{)}
+      \PYG{k}{select} \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{circuitId}\PYG{p}{,}
+            \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{circuitRef}\PYG{p}{,}
+            \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{name}\PYG{p}{,}
+            \PYG{k}{NEW}\PYG{p}{.}\PYG{k}{location}\PYG{p}{,}
+            \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{country}\PYG{p}{,}
+            \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{lat}\PYG{p}{,}
+            \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{lng}\PYG{p}{,}
+            \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{alt}\PYG{p}{,}
+            \PYG{k}{NEW}\PYG{p}{.}\PYG{n}{url}\PYG{p}{;}
+
+    \PYG{k}{END} \PYG{k}{IF}\PYG{p}{;}
+\end{Verbatim}

@@ -1,9 +1,9 @@
 use f1;
 
-
+#--------------------------------------------------------------After Inserts--------------------------------------------------------------
 #DRIVERS
 DELIMITER $$
-drop trigger if exists insert_drivers;
+DROP TRIGGER IF EXISTS insert_drivers;
 create trigger insert_drivers
     after insert
     on f1.drivers
@@ -46,7 +46,7 @@ DELIMITER ;
 
 #CONSTRUCTORS
 DELIMITER $$
-drop trigger if exists insert_constructors;
+DROP TRIGGER IF EXISTS insert_constructors;
 create trigger insert_constructors
     after insert
     on f1.constructors
@@ -79,7 +79,7 @@ DELIMITER ;
 #--------------------------------------------------------------
 #CIRCUITS
 DELIMITER $$
-drop trigger if exists insert_circuits;
+DROP TRIGGER IF EXISTS insert_circuits;
 create trigger insert_circuits
     after insert
     on f1.circuits
@@ -123,7 +123,7 @@ DELIMITER ;
 
 #RACE
 DELIMITER $$
-drop trigger if exists insert_race;
+DROP TRIGGER IF EXISTS insert_race;
 create trigger insert_race
     after insert
     on f1.races
@@ -166,7 +166,7 @@ DELIMITER ;
 
 #SEASONS
 DELIMITER $$
-drop trigger if exists insert_seasons;
+DROP TRIGGER IF EXISTS insert_seasons;
 create trigger insert_seasons
     after insert
     on f1.seasons
@@ -198,7 +198,7 @@ DELIMITER ;
 
 #CONSTRUCTOR_RESULTS
 DELIMITER $$
-drop trigger if exists insert_constructorResults;
+DROP TRIGGER IF EXISTS insert_constructorResults;
 create trigger insert_constructorResults
     after insert
     on f1.constructorresults
@@ -220,11 +220,13 @@ begin
 
 
         insert into f1_olap.results (raceId, constructorId,
-                                     points_constructor, status_constructor)
+                                     points_constructor, status_constructor, raceId, constructorId)
         select NEW.raceId,
                NEW.constructorId,
                NEW.points,
-               NEW.status;
+               NEW.status,
+               NEW.raceId,
+               NEW.constructorId;
 
     END IF;
 
@@ -232,22 +234,217 @@ end;
 DELIMITER ;
 
 #CONSTRUCTOR STANDINGS
+DELIMITER $$
+DROP TRIGGER IF EXISTS insert_constructorStandings;
+create trigger insert_constructorStandings
+    after insert
+    on f1.constructorstandings
+    for each row
+begin
+
+    #If the circuit is in the database we are going to update the other fields
+    IF EXISTS(SELECT * FROM f1_olap.results l WHERE l.raceId = NEW.raceId) THEN
+
+        update f1_olap.results
+        SET raceId                      = NEW.raceId,
+            constructorId               = NEW.constructorId,
+            points_constructor_standing = NEW.points,
+            position_constructor        = NEW.position,
+            positionText_constructor    = NEW.positionText,
+            wins                        = NEW.wins
+        WHERE raceId = NEW.raceId
+          AND constructorId = NEW.constructorId;
+
+        #TODO gestionar las relaciones si uno se ha inserido pero el otro no
+
+
+    ELSE
+
+        insert into f1_olap.results (raceId, constructorId, points_constructor_standing, position_constructor,
+                                     positionText_constructor, wins, raceId, constructorId)
+        select NEW.raceId,
+               NEW.constructorId,
+               NEW.points,
+               NEW.position,
+               NEW.positionText,
+               NEW.wins,
+               NEW.raceId,
+               NEW.constructorId;
+    END IF;
+
+end;
+DELIMITER ;
+
 
 #DRIVER STANDINGS
 
+DELIMITER $$
+DROP TRIGGER IF EXISTS insert_driverStandings;
+create trigger insert_driverStandings
+    after insert
+    on f1.driverstandings
+    for each row
+begin
+
+    #If the circuit is in the database we are going to update the other fields
+    IF EXISTS(SELECT * FROM f1_olap.results l WHERE l.raceId = NEW.raceId) THEN
+
+        update f1_olap.results
+        SET points_driver       = NEW.points,
+            position_driver     = NEW.position,
+            positionText_driver = NEW.positionText,
+            wins_driver         = NEW.wins
+        WHERE raceId = NEW.raceId
+          AND driverId = NEW.driverId;
+
+        #TODO gestionar las relaciones si uno se ha inserido pero el otro no
+
+
+    ELSE
+
+        insert into f1_olap.results (points_driver, position_driver, positionText_driver,
+                                     wins_driver, raceId, driverId)
+        select NEW.points,
+               NEW.position,
+               NEW.positionText,
+               NEW.wins,
+               NEW.raceId,
+               NEW.driverId;
+    END IF;
+
+end;
+DELIMITER ;
+
+
 #STATUS
 
-#QUALIFYING
+DELIMITER $$
+DROP TRIGGER IF EXISTS insert_status;
+create trigger insert_status
+    after insert
+    on f1.status
+    for each row
+BEGIN
 
+    #If the circuit is in the database we are going to update the other fields
+    IF EXISTS(SELECT * FROM f1_olap.results l WHERE l.status is null) THEN
+
+        update f1_olap.results
+        SET status = NEW.status
+        WHERE f1.results.statusId = NEW.statusId
+          AND f1.results.raceId = f1_olap.results.raceId;
+
+        #TODO gestionar las relaciones si uno se ha inserido pero el otro no
+
+
+#     ELSE
+#
+#         insert into f1_olap.results (points_driver, position_driver, positionText_driver,
+#                                      wins_driver, raceId, driverId)
+#         select NEW.points,
+#                NEW.position,
+#                NEW.positionText,
+#                NEW.wins,
+#                NEW.raceId,
+#                NEW.driverId;
+    END IF;
+
+end;
+DELIMITER ;
+
+#QUALIFYING
+DELIMITER $$
+DROP TRIGGER IF EXISTS insert_qualifying;
+create trigger insert_qualifying
+    after insert
+    on f1.qualifying
+    for each row
+begin
+
+    #If the circuit is in the database we are going to update the other fields
+    IF EXISTS(SELECT * FROM f1_olap.results l WHERE l.raceId = NEW.raceId) THEN
+
+        update f1_olap.results
+        SET position_qual = NEW.position,
+            q1            = NEW.q1,
+            q2            = NEW.q2,
+            q3            = NEW.q3
+        WHERE raceId = NEW.raceId
+          AND driverId = NEW.driverId;
+
+        #TODO gestionar las relaciones si uno se ha inserido pero el otro no
+    ELSE
+
+        insert into f1_olap.results (position_qual, q1, q2, q3, raceId, driverId)
+        select NEW.position,
+               NEW.q1,
+               NEW.q2,
+               NEW.q3,
+               NEW.raceId,
+               NEW.driverId;
+    END IF;
+
+end;
+DELIMITER ;
 
 #RESULTS
+DELIMITER $$
+DROP TRIGGER IF EXISTS insert_results;
+create trigger insert_results
+    after insert
+    on f1.results
+    for each row
+begin
+
+    #If the circuit is in the database we are going to update the other fields
+    IF EXISTS(SELECT * FROM f1_olap.results l WHERE l.raceId = NEW.raceId) THEN
+
+        update f1_olap.results
+        SET grid            = NEW.grid,
+            position        = NEW.position,
+            positionText    = NEW.positionText,
+            positionOrder   = NEW.positionOrder,
+            points          = NEW.points,
+            laps            = NEW.laps,
+            time            = NEW.time,
+            milliseconds    = NEW.milliseconds,
+            fastestLap      = NEW.fastestLap,
+            `rank`          = NEW.`rank`,
+            fastestLapTime  = NEW.fastestLapTime,
+            fastestLapSpeed = NEW.fastestLapSpeed
+        WHERE raceId = NEW.raceId
+          AND driverId = NEW.driverId;
+
+        #TODO gestionar las relaciones si uno se ha inserido pero el otro no
+    ELSE
+
+        insert into f1_olap.results (grid, position, positionText, positionOrder, points, laps, time, milliseconds,
+                                     fastestLap, `rank`, fastestLapTime, fastestLapSpeed, raceId, driverId)
+        select NEW.grid,
+               NEW.position,
+               NEW.positionText,
+               NEW.positionOrder,
+               NEW.points,
+               NEW.laps,
+               NEW.time,
+               NEW.milliseconds,
+               NEW.fastestLap,
+               NEW.`rank`,
+               NEW.fastestLapTime,
+               NEW.fastestLapSpeed,
+               NEW.raceId,
+               NEW.driverId;
+    END IF;
+
+end;
+DELIMITER ;
 
 
 #-------------------------------------------------------------------
 
 #LAPTIME
 DELIMITER $$
-drop trigger if exists insert_laptime;
+DROP TRIGGER IF EXISTS insert_laptime;
 create trigger insert_laptime
     after insert
     on f1.laptimes
@@ -255,7 +452,7 @@ create trigger insert_laptime
 begin
 
     #If the circuit is in the database we are going to update the other fields
-    IF EXISTS(SELECT * FROM f1_olap.laptimes l WHERE l.TIME != 0) THEN
+    IF EXISTS(SELECT * FROM f1_olap.laptimes l WHERE l.time is null) THEN
 
         update f1_olap.laptimes
         SET raceId       = NEW.raceId,
@@ -265,7 +462,8 @@ begin
             time         = NEW.time,
             milliseconds = NEW.milliseconds
         WHERE raceId = NEW.raceId
-          AND driverId = NEW.driverId;
+          AND driverId = NEW.driverId
+          AND lap = NEW.lap;
 
         #TODO gestionar las relaciones si uno se ha inserido pero el otro no
 
@@ -288,7 +486,7 @@ DELIMITER ;
 
 #PITSTOP
 DELIMITER $$
-drop trigger if exists insert_pitstop;
+DROP TRIGGER IF EXISTS insert_pitstop;
 create trigger insert_pitstop
     after insert
     on f1.pitstops
@@ -296,30 +494,32 @@ create trigger insert_pitstop
 begin
 
     #If the circuit is in the database we are going to update the other fields
-    IF EXISTS(SELECT * FROM f1_olap.laptimes l WHERE l.TIME != null) THEN
+    IF EXISTS(SELECT * FROM f1_olap.laptimes l WHERE l.stop is null) THEN
 
         update f1_olap.laptimes
-        SET raceId = NEW.raceId,
-            driverId = NEW.driverId,
-            stop = NEW.stop,
-            time = NEW.time,
-            duration = NEW.duration,
-            milliseconds = NEW.milliseconds
+        SET raceId               = NEW.raceId,
+            driverId             = NEW.driverId,
+            stop                 = NEW.stop,
+            time_pitstop         = NEW.time,
+            duration             = NEW.duration,
+            milliseconds_pitstop = NEW.milliseconds
         WHERE raceId = NEW.raceId
-          AND driverId = NEW.driverId;
+          AND driverId = NEW.driverId
+          AND lap = NEW.lap;
 
         #TODO gestionar las relaciones si uno se ha inserido pero el otro no
 
 
     ELSE
 
-        insert into f1_olap.laptimes (raceId, driverId, stop, time_pitstop, duration, milliseconds_pitstop)
+        insert into f1_olap.laptimes (raceId, driverId, stop, time_pitstop, duration, milliseconds_pitstop, lap)
         select NEW.raceId,
                NEW.driverId,
                NEW.stop,
                NEW.time,
                NEW.duration,
-               NEW.milliseconds;
+               NEW.milliseconds,
+               NEW.lap;
 
     END IF;
 
