@@ -1,6 +1,6 @@
 use f1;
 
-#--------------------------------------------------------------After Inserts--------------------------------------------------------------
+#--------------------------------------------------------------Trigger--------------------------------------------------------------
 #DRIVERS
 DELIMITER $$
 DROP TRIGGER IF EXISTS insert_drivers;
@@ -523,4 +523,37 @@ begin
     END IF;
 
 end;
+DELIMITER ;
+
+
+
+
+
+#--------------------------Events----------------------------------------------------------
+
+USE f1_olap;
+SET GLOBAL event_scheduler = ON;
+#-------------------------------------------------
+DELIMITER $$
+DROP EVENT IF EXISTS insertion_event;
+CREATE EVENT insertion_event
+    ON SCHEDULE EVERY 1 DAY STARTS '2020-07-05 23:59:00'
+    DO
+    BEGIN
+        CREATE TABLE IF NOT EXISTS log
+        (
+            id                int AUTO_INCREMENT,
+            fecha             DATETIME,
+            importation_error BOOL,
+            PRIMARY KEY (id)
+        );
+
+        CALL compare_circuit();
+        CALL compare_constructor();
+        CALL compare_driver();
+        CALL compare_laptimes();
+        CALL compare_results();
+
+    END $$
+
 DELIMITER ;

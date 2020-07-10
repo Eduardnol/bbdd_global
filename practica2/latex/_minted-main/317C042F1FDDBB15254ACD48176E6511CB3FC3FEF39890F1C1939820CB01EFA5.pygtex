@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+  \PYG{k}{DELIMITER} \PYG{err}{\PYGZdl{}\PYGZdl{}}
+  \PYG{k}{DROP} \PYG{k}{PROCEDURE} \PYG{k}{IF} \PYG{k}{EXISTS} \PYG{n}{log} \PYG{err}{\PYGZdl{}\PYGZdl{}}
+  \PYG{k}{CREATE} \PYG{k}{PROCEDURE} \PYG{n}{log}\PYG{p}{(}\PYG{k}{IN} \PYG{n}{error} \PYG{n}{BOOL}\PYG{p}{,} \PYG{k}{IN} \PYG{n}{nombre} \PYG{n+nb}{char}\PYG{p}{(}\PYG{l+m+mi}{255}\PYG{p}{))}
+  \PYG{k}{BEGIN}
+      \PYG{k}{IF} \PYG{p}{(}\PYG{n}{error} \PYG{o}{=} \PYG{k}{true}\PYG{p}{)} \PYG{k}{THEN}
+
+          \PYG{k}{INSERT} \PYG{k}{INTO} \PYG{n}{log} \PYG{p}{(}\PYG{n}{fecha}\PYG{p}{,} \PYG{n}{importation\PYGZus{}error}\PYG{p}{)} \PYG{k}{VALUES} \PYG{p}{(}\PYG{n}{NOW}\PYG{p}{(),} \PYG{n}{nombre}\PYG{p}{);}
+      \PYG{k}{end} \PYG{k}{if}\PYG{p}{;}
+  \PYG{k}{END} \PYG{err}{\PYGZdl{}\PYGZdl{}}
+  \PYG{k}{DELIMITER} \PYG{p}{;}
+\end{Verbatim}

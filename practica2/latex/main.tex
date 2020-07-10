@@ -39,7 +39,7 @@
   \clearpage
 }
 
-\section{Introduction With a Brief Summary}
+\section{Introducción}
   \paragraph{}
   Se debe realizar una importación de la base de datos alojada en Puigpedrós hacia una base de datos local de tipo OLTP.
   \paragraph{}
@@ -50,7 +50,7 @@
   Para hacer la comparativa, se van a realizar distintas queries que nos van a permitir encontrar la verdadera eficacia del uso de este tipo de tablas.
 
 \pagebreak
-\section{OLAP and OLTP concepts explained}
+\section{Conceptos OLAP y OLTP explicados}
   \paragraph{}
   OLTP es un tipo de Base de Datos normalizado según las normas formales. Se centra en la optimización del almacenamiento de las tablas. Mientras que el modelo OLAP se centra más en juntar tablas previsiblemente debamos tener juntas en las futuras queries. 
   \paragraph{}
@@ -163,7 +163,7 @@
     \end{table}
 
 \pagebreak
-\section{Explain How You Find Out The Remote OLTP Database Structure}
+\section{Estructura de la Base de Datos Remota}
 
   \paragraph{}
   Para encontrar la estructura de la base de datos remota, se ha conectado al servidor de Puigpedros y desde ahí a la base de datos. 
@@ -172,13 +172,13 @@
   Desde la línea de comandos se ha usado el comando Show Databases para ver las bases de datos a las que tenemos acceso.
 
   \paragraph{}
-  Ejecutamos el use F1; para usar la base de datos F1 y recibimos el resultado de: Figura \ref{tablas}
+  Ejecutamos el use F1; para usar la base de datos F1 y recibimos el resultado de: Figura \ref{fig:tablas}
 
   \begin{figure}[H]
     \centering
-    \label{tablas}
     \includegraphics[width=8cm]{tables.png}  
     \caption{Todas las Tablas de la Base de Datos}
+    \label{fig:tablas}
 
   \end{figure}
 
@@ -187,20 +187,36 @@
   Ejecutamos Show tables; para ver todas las tablas que hay en F1
 
   \paragraph{}
-  Luego vamos ejecutando de manera individual los describe en la Figura \ref{table_columns}
+  Luego vamos ejecutando de manera individual los describe en la Figura \ref{fig:table_columns}
 
   \begin{figure}[H]
     \centering
-    \label{table_columns}
     \includegraphics[width=8cm]{table_columns.png}
     \caption{Columnas en la tabla circuits}
+    \label{fig:table_columns}
   \end{figure}
 
 \pagebreak
-\section{Relational OLAP Model Diagram}
+\section{Relational OLAP Diagrama}
+\begin{itemize}
+  \item \textbf{Circuits:} Contiene toda la información relacionada con los circuitos, las temporadas y las carreras. Se han juntado estas tablas debido a la relación que había entre estas en la OLTP. Mucha de la información se encontraba en las tres y al estar muy relacionadas se ha juntado en una sola. También nos ha servido para agilizar las consultas, debido a que en la mayoria de ocasiones vamos a necesitar que esta información se encuentre junta en una misma tabla bajo la forma de joins.
+  \item \textbf{Constructors}: Para los constructores se ha escogido dejarlos tal y como se encontraban anteriormente. Se consideró la posibilidad de juntar constructors con la tabla drivers. Pero esta idea quedó automáticamente descartada debido a que dependiendo de la temporada en la que nos encontremos (dependiendo del año) los pilotos podian cambiar de Scuderia y por tanto de Constructores.
+  \item \textbf{Drivers:} Siguiendo el modelo de Constructors, se ha optado por dejar solos a los conductores, habiendo considerado la posibilidad descrita anteriormente en Constructors.
+  \item \textbf{Laptimes:} Debido a la similitud entre las informaciones, se ha juntado la información de Laptimes con la de Pitstop, dejando a null las vueltas que los pilotos no entraban en boxes y completando todas las columnas en aquellas en las que si que entraban.
+  \item \textbf{Results:} En la tabla de resultados, se han acabado de juntar todas las tablas relacionadas con las finalizaciones de las carreras o de cualquier otra cosa que tuviera que ver con los resultados, como puede ser: \begin{itemize}
+    \item results
+    \item status
+    \item qualifying
+    \item constructor results
+    \item constructor standings 
+    \item driver standings
+  \end{itemize}
+
+  
+\end{itemize}
 \includepdf[]{resources/bbdd_p2.pdf}
 \pagebreak
-\section{Explain How Your Java Program Works}
+\section{Funcionamiento del programa en Java}
   \paragraph{}
   Este programa usa una librería:\\
   -	OpenCSV\\
@@ -213,7 +229,7 @@
   \paragraph{}
   Las clases utilizadas se pueden encontrar en la documentación del proyecto.
   \pagebreak
-\section{Explain How You Created The Users}
+\section{Creación De Usuarios}
   \begin{figure}[H]
     \centering
     \includegraphics[width=8cm]{privilege.png}
@@ -254,9 +270,37 @@
   \end{listing}
 
 \pagebreak
-\section{Explain How Your Stored Procedures Work}
+\section{Explicación de los Stored Procedures}
+  \subsection{Compare Procedures}
+  \paragraph{}
+  El procedieminto se basa en un LOOP, el cual se va a ir ejecutando para ir comprobando si las filas que se van analizando por el cursor se encuentran dentro de la tabla de la otra base de datos. 
+
+  \paragraph{}
+  Así pues, si comprobáramos que esa fila no se encuentra tal cual dentro de la tabla en la otra base de datos, saltará error y luego se llamará al procedimiento para rellenar LOG.
+  \subsection{Log Procedures}
+  Si se dedtecta que se ha encontrado un error, Se va a insertar el valor de la fecha y el nombre del error de la tabla en la tabla LOG. Como podemos ver en Listing \ref{lst:LogInsertions}
+
+  \begin{listing}[H]
+    \begin{minted}[bgcolor = DarkGray, breaklines = true, fontsize=\footnotesize]{SQL}
+
+  DELIMITER $$
+  DROP PROCEDURE IF EXISTS log $$
+  CREATE PROCEDURE log(IN error BOOL, IN nombre char(255))
+  BEGIN
+      IF (error = true) THEN
+
+          INSERT INTO log (fecha, importation_error) VALUES (NOW(), nombre);
+      end if;
+  END $$
+  DELIMITER ;
+
+    \end{minted}
+    \caption{Log Insertions}
+    \label{lst:LogInsertions}
+  \end{listing}
+
 \pagebreak
-\section{Explain How Your Events And Triggers Works}
+\section{Explicación de Triggers y Events}
   \subsection{Triggers}
     \paragraph{}
     Después de una inserción dentro de alguno de los campos de la base de datos OLTP se va a actualizar los campos correspondientes dentro de la tabla OLAP, el problema viene cuando en la OLAP hemos juntado distintas tablas en una sola.
@@ -301,9 +345,18 @@
       \label{lst:insert}
     \end{listing}
 
+    Así pues, como podemos ver, la única cosa que hay que tener en cuenta es tener las claves de las respectivas tablas siempre insertadas la primera vez. De ese modo, vamos a usar esas mismas clases para hacer un update, de manera que coincidan todas las líneas.
   \subsection{Events}
+  \paragraph{}
+  Los events van a tomar los elementos de la tabla OLAP y los va a comparar con su equivalente en la tabla OLTP.
+
+  \paragraph{}
+  En caso de que salgan resultados diferentes, vamos a reportarlo en una tabla auxiliar con la fecha del error.
+
+  \paragraph{}
+  Cada dia, se va a hacer una comprobación de las tablas. Llamando a los procedimientos que controlan cada una de las tablas de OLAP. Desde estos procedimientos, se va a llamar a un tercero, que se va a encargar de rellenar la tabla LOG.
 \pagebreak
-\section{Report about OLTP vs OLAP Comparison}
+\section{Reporte comparativo entre OLAP y OLTP}
   \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{graficas.png}
@@ -323,7 +376,20 @@ En el caso de que trabajasemos con mayores volúmenes de datos durante la inserc
 \paragraph{}
 De hecho, se puede ver con más claridad, al realizar las inserciones iniciales. La base de datos OLTP es mucho más eficaz al hacer las inserciones que la OLAP. Tardando la primera cerca de 1 minuto mientras que la seguna tarda varias horas.
 \pagebreak
-\section{Time Dedicated Per Part}
+\section{Tiempo Dedicado Por Parte}
+
+  \paragraph{}
+  La parte a la que más tiempo hubo que dedicar, fue en la importación desd la OLTP a la OLAP y también con los EVENTS que gestinan las comprobaciones de que se han realizado de manera correcta. 
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{horas.png}
+    \caption{Gráficas tiempo}
+    \label{fig:specular}
+  \end{figure}
+
+  \paragraph{}
+  Finalmente, la memoria, fue una de las cosas que más tiempo se invirtió. Aunque hay que tener en cuenta que no están incluidas las horas de investigación sobre las Bases OLAP y OLTP. La memoria se ha realizado a medida que se avanzaba en el trabajo y en la investigación.
 \pagebreak
 \section{Conclusiones}
 Podemos conluir, que de cara a realizar consultas complejas y al trabajar con largos volúmenes de datos en operaciones que requieren procesamiento intenso, acabamos viendo como es más eficaz usar una Base De Datos de tipo OLAP. Que al final no deja de ser una OLTP desnormalizada.
