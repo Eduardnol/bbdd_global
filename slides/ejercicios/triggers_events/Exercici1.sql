@@ -1,3 +1,5 @@
+use ejemplo1;
+
 DROP TABLE IF EXISTS persona;
 
 CREATE TABLE persona(

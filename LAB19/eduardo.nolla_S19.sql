@@ -37,18 +37,19 @@ END
 $$
 DELIMITER ;
 
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS getDate $$
+CREATE PROCEDURE getDate(OUT date DATE)
+BEGIN
+
+    SET date = CURDATE();
+
+END
+$$
+DELIMITER ;
 
 
-# DELIMITER $$
-# DROP PROCEDURE IF EXISTS writeFile $$
-# CREATE PROCEDURE writeFile()
-# BEGIN
-#     SELECT *
-#       INTO OUTFILE SELECT CONCAT('/path/to/', ADD DATE , '.txt');
-#         FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-#         LINES TERMINATED BY '\n'
-#       FROM movie_modificado;
-# END $$
 
 
 ################################################  TRIGGER  ################################################
@@ -98,6 +99,16 @@ CREATE EVENT canvis
     COMMENT 'Cada dia a las 11:00 guarda una copia'
     DO BEGIN
     #Creación del fichero
+
+   CALL getDate(@fecha);
+
+
+    SELECT *
+    FROM movie_modificado
+    INTO OUTFILE @fecha
+        FIELDS TERMINATED BY ';'
+        OPTIONALLY ENCLOSED BY '\"'
+        LINES TERMINATED BY '\n';
 
 
     DROP TABLE IF EXISTS movie_modificado;

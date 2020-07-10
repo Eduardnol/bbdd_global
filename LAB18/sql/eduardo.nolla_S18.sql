@@ -36,18 +36,17 @@ SELECT @result;
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS masterControlBadge $$
-CREATE PROCEDURE masterControlBadge(IN id_persona int, OUT wasFound int)
+CREATE PROCEDURE masterControlBadge(IN id_person_in int, OUT wasFound int)
 BEGIN
 
     DECLARE done INT DEFAULT 0;
     DECLARE actual_time DATETIME;
     DECLARE time_in DATETIME;
     DECLARE time_out DATETIME;
-    DECLARE persona VARCHAR(5);
     DECLARE id_user INT;
-    DECLARE cur1 CURSOR FOR SELECT access_in, access_out, id_person FROM timer;
+    DECLARE cur1 CURSOR FOR SELECT access_in, access_out FROM timer;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-    SET id_user = id_persona;
+    SET id_user = id_person_in;
     SET actual_time = now();
 
 
@@ -55,7 +54,7 @@ BEGIN
     buscaHora:
     LOOP
 
-        FETCH cur1 INTO time_in, time_out, persona;
+        FETCH cur1 INTO time_in, time_out;
 
         #se va a la office
         IF done = 1 THEN
@@ -65,8 +64,9 @@ BEGIN
         END IF;
 
         #Sesion Abierta
-        IF TIMESTAMPDIFF(HOUR, time_in, actual_time) >= 8 AND time_out IS NULL THEN
+        IF TIMESTAMPDIFF(SECOND, time_in, actual_time) > (8 * 3600) AND time_out IS NULL THEN
             UPDATE timer SET access_out = '2000-01-01 00:00:00' WHERE id_person = id_user AND access_out IS NULL;
+            INSERT INTO timer (access_in, access_out, id_person) VALUES (actual_time, null, id_user);
             SET wasFound = 0;
             LEAVE buscaHora;
 

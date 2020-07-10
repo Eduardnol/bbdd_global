@@ -45,11 +45,13 @@ public class Controller implements ActionListener {
                 String result = "";
 
                 //TODO: Mitjançant ResultSet i selectQuery ompliu la variable result amb el resultat de la query
-                ResultSet resultSet = (conn.selectQuery("SELECT * FROM movie m WHERE m.title = '" + paraulaClau + "';"));
+                ResultSet resultSet = (conn.selectQuery("SELECT * FROM movie m WHERE m.title like '%" + paraulaClau + "%';"));
 
-                resultSet.next();
+                while(resultSet.next()){
+                    //resultSet.next();
+                    result += resultSet.getString("title") + System.lineSeparator();
+                }
 
-                result = resultSet.getString("title");
 
                 resultSet.close();
                 //Mostrem el resultat de la query a la interfície gràfica:
